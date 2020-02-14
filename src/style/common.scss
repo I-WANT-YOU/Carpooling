@@ -1,0 +1,89 @@
+$theme-color: #59B0A0;
+
+.text-justify {
+  text-align: justify;
+  text-justify: inter-character;  /* IE */
+}
+
+.indent{
+  text-indent: 2em;
+}
+
+.ellipsis{
+  width: 200px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.auto_img {
+  width: 295px;
+  height: auto;
+}
+
+.auto_img1 {
+  width: 190px;
+  height: auto;
+}
+
+.global-mask {
+  color: $theme-color;
+
+  .van-loading__circular{
+    color: $theme-color;
+  }
+}
+
+@for $i from 1 through 780 {
+  .auto-width-#{$i} {
+    width: $i * 315 / 780 + px;
+  }
+}
+
+@for $i from 1 through 10 {
+  .ellipsis-more-#{$i} {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;//将对象作为弹性伸缩盒子模型显示
+    -webkit-line-clamp: $i;//控制显示几行文字
+    -webkit-box-orient: vertical;//设置伸缩盒对象的子元素排列方式
+  }
+}
+
+@for $i from 1 through 200 {
+  .m-#{$i} {
+    margin: $i + px;
+  }
+  .m-t-#{$i} {
+    margin-top: $i + px;
+  }
+  .m-b-#{$i} {
+    margin-bottom: $i + px;
+  }
+  .m-l-#{$i} {
+    margin-left: $i + px;
+  }
+  .m-r-#{$i} {
+    margin-right: $i + px;
+  }
+
+  .p-#{$i} {
+    padding: $i + px;
+  }
+  .p-t-#{$i} {
+    padding-top: $i + px;
+  }
+  .p-b-#{$i} {
+    padding-bottom: $i + px;
+  }
+  .p-l-#{$i} {
+    padding-left: $i + px;
+  }
+  .p-r-#{$i} {
+    padding-right: $i + px;
+  }
+
+  .fz-#{$i} {
+    font-size: $i + px;
+  }
+}
