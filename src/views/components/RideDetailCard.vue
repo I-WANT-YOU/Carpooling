@@ -24,31 +24,36 @@
         <van-image  :src="when" class="front-icon"/>
         <van-field v-model="departureTime" class="input-class" placeholder="何时出发" readonly @click="showDate"/>
       </div>
-      <div class="howContainer">
+      <div v-if="userType==='passenger'" class="howContainer">
         <van-image  :src="people" class="front-icon"/>
-        <van-field v-model="passengerNumbers" class="input-class" placeholder="几人乘车" readonly/>
+        <van-field v-model="passengerNumber" class="input-class" placeholder="几人乘车" readonly  @click="showPassengerNumber"/>
+      </div>
+      <div v-else class="howContainer">
+        <van-image  :src="money" class="front-icon"/>
+        <van-field v-model="unitPrice" class="input-class" placeholder="每人单价" readonly  @click="showUnitPrice"/>
       </div>
     </div>
-    <div class=" line line-two" v-show="userType==='driver'"></div>
+    <div class=" line line-two" v-show="userType"></div>
     <!--途径多个站点-->
     <div class="sites" v-show="userType==='driver'">
-      <van-image  :src="sites" class="front-icon"/>
-      <van-field v-model="siteNumbers" class="input-class" placeholder="途经多个站点" />
+      <van-image  :src="sites" class="front-icon site-icon"/>
+      <van-field type="textarea" :autosize="{minHeight: 50 }" v-model="allSites" class="input-class text-area-class" placeholder="途经多个站点" readonly  @click="showAllSites"/>
     </div>
     <!--button-->
-    <button class="button-class">
-      预约拼车
-    </button>
+    <button class="button-class" @click="confirmCarpooling">{{userType==='driver'?'发布':'预约拼车'}}</button>
   </div>
 </template>
 
 <script>
+import formatDate from 'dayjs';
 import { Field, Image } from 'vant';
+import { mapActions, mapState, mapGetters } from 'vuex';
 import from from './images/from.png';
 import when from './images/when.png';
 import people from './images/people.png';
 import sites from './images/sites.png';
-import changeButton from './images/button.jpg';
+import money from './images/money.png';
+import changeButton from './images/changeButton.png';
 
 export default {
   name: 'RideDetailCard',
@@ -59,13 +64,16 @@ export default {
       people,
       sites,
       changeButton,
+      money,
       formDestination: '',
       toDestination: '',
       fromAddress: '', // 出发地
       toAddress: '', // 目的地
       departureTime: '', // 出发时间
-      passengerNumbers: '', // 几人乘车
-      siteNumbers: '', // 途径多个站点
+      passengerNumber: '', // 几人乘车
+      unitPrice: '', // 单价
+      allSites: '', // 站点
+      buttonText: '', // 按钮文案
     };
   },
   props: {
@@ -85,6 +93,18 @@ export default {
       type: String,
       default: '',
     },
+    confirmPassengerNumber: {
+      type: String,
+      default: '',
+    },
+    confirmUnitPrice: {
+      type: String,
+      default: '',
+    },
+    confirmSites: {
+      type: String,
+      default: '',
+    },
   },
   components: {
     'van-field': Field,
@@ -97,12 +117,74 @@ export default {
     confirmFromAddress() {
       this.fromAddress = this.confirmFromAddress;
     },
-    confirmDate() {
-      this.departureTime = this.confirmDate;
+    confirmDate(value) {
+      const currentDate = JSON.parse(value);
+      if (currentDate.day === 'today') {
+        this.departureTime = `今天 ${currentDate.time} 出发`;
+      } else {
+        this.departureTime = `明天 ${currentDate.time} 出发`;
+      }
+    },
+    confirmPassengerNumber() {
+      this.passengerNumber = `${this.confirmPassengerNumber}人乘车`;
+    },
+    confirmUnitPrice() {
+      this.unitPrice = `${this.confirmUnitPrice}元/每人`;
+    },
+    confirmSites() {
+      this.allSites = JSON.parse(this.confirmSites).join(',');
     },
   },
+  computed: {
+    ...mapState('passenger', ['travelList']),
+    ...mapGetters('passenger', ['passengerTravelList']),
+  },
   methods: {
-    // 地址弹窗
+    ...mapActions('passenger', ['searchTravel']),
+    ...mapActions('driver', ['publishTravel']),
+    /*
+      接口方法
+    */
+
+    // 乘客获取行程
+    async passengerSearchTravel(currentParams) {
+      try {
+        this.showLoadingToast();
+        await this.searchTravel(currentParams);
+        this.clearLoadingToast();
+        if (this.travelList.length === 0) {
+          this.showToast('当前行程为空');
+        }
+      } catch (error) {
+        this.clearLoadingToast();
+        if (error === '请先绑定手机号') {
+          this.$emit('showBindingPhone');
+        } else {
+          this.showToast('error');
+        }
+      }
+    },
+    // 司机发布行程
+    async diverReleaseSchedule(currentParams) {
+      try {
+        this.showLoadingToast();
+        await this.publishTravel(currentParams);
+        this.clearLoadingToast();
+        await this.$router.push('/driverSchedules');
+      } catch (error) {
+        this.clearLoadingToast();
+        if (error === '请先绑定手机号') {
+          this.$emit('showBindingPhone');
+        } else if (error === '请先编辑车辆信息') {
+          this.$router.push('/inputCarInfo');
+        } else {
+          this.showToast(error);
+        }
+      }
+    },
+    /*
+    非接口方法
+     */
     showAddress(value) {
       this.$emit('showAddress', value);
     },
@@ -110,11 +192,101 @@ export default {
     showDate() {
       this.$emit('showDate');
     },
+    // 乘车人数弹窗
+    showPassengerNumber() {
+      this.$emit('showPassengerNumber');
+    },
+    // 站点弹窗
+    showAllSites() {
+      this.$emit('showAllSites');
+    },
+    // 价格弹窗
+    showUnitPrice() {
+      this.$emit('showUnitPrice');
+    },
     // 切换出发地和目的地
     changeAddress() {
-      const tempAddress = this.fromAddress;
-      this.fromAddress = this.toAddress;
-      this.toAddress = tempAddress;
+      if (this.fromAddress !== '' && this.toAddress !== '') {
+        const tempAddress = this.fromAddress;
+        this.fromAddress = this.toAddress;
+        this.toAddress = tempAddress;
+      }
+    },
+    // 预约拼车
+    async confirmCarpooling() {
+      if (this.fromAddress === '') {
+        this.showToast('请填写上车地点');
+        return false;
+      }
+      if (this.toAddress === '') {
+        this.showToast('请填写目的地');
+        return false;
+      }
+      if (this.departureTime === '') {
+        this.showToast('请填写出发时间');
+        return false;
+      }
+      if (this.userType === 'passenger') {
+        if (this.passengerNumber === '') {
+          this.showToast('请填写乘车人数');
+          return false;
+        }
+      } else {
+        if (this.unitPrice === '') {
+          this.showToast('每人单价');
+          return false;
+        }
+        if (this.allSites === '') {
+          this.showToast('途径站点');
+          return false;
+        }
+      }
+
+      // 时间格式转换
+      let currentDate = JSON.parse(this.confirmDate);
+      const nowDate = `${formatDate().format('YYYY-MM-DD')} ${currentDate.time}`;
+      if (currentDate.day === 'today') {
+        currentDate = formatDate(nowDate).valueOf();
+      } else {
+        currentDate = formatDate(nowDate).valueOf() + 24 * 60 * 60 * 1000;
+      }
+      // 发送请求
+      const currentParams = {
+        fromAddress: this.fromAddress,
+        toAddress: this.toAddress,
+        departureTime: currentDate,
+        showDate: this.departureTime,
+      };
+      if (this.userType === 'passenger') {
+        currentParams.passengerNumber = this.confirmPassengerNumber;
+      } else {
+        currentParams.unitPrice = this.confirmUnitPrice;
+        currentParams.allSites = this.allSites;
+      }
+      if (this.userType === 'passenger') {
+        await this.passengerSearchTravel(currentParams);
+        if (this.travelList.length !== 0) {
+          /*    const currentData = {
+            showData: this.passengerTravelList,
+            passengerShowData: {
+              fromAddress: this.fromAddress,
+              toAddress: this.toAddress,
+              departureTime: currentDate,
+              showDate: this.departureTime,
+              passengerNumber: this.confirmPassengerNumber,
+            },
+          }; */
+          this.$router.push({
+            name: 'ActiveOrderList',
+            query: {
+              data: JSON.stringify(currentParams),
+            },
+          });
+        }
+      } else {
+        await this.diverReleaseSchedule(currentParams);
+      }
+      return true;
     },
   },
 };
@@ -142,6 +314,12 @@ export default {
   /*input 样式和icon样式*/
   .input-class{
     padding:0 10px;
+  }
+  .text-area-class{
+    .van-field__control{
+      height: 38px;
+      line-height: 38px;
+    }
   }
   .front-icon{
     width: 16px;
@@ -193,9 +371,12 @@ export default {
   }
   /*t途径多个站点*/
   .sites{
-    height: 55px;
+    padding-top: 10px;
     display: flex;
-    align-items: center;
+    align-items: flex-start;
+    .site-icon{
+      margin-top: 10px;
+    }
   }
   /*出发时间和乘车人数*/
   .when-how{

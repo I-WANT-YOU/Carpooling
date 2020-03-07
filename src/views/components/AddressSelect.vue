@@ -1,5 +1,5 @@
 <template>
-  <div class="popContainer">
+  <div class="addressPopContainer">
     <van-popup
       v-model="showPop"
       :close-on-click-overlay="false"
@@ -23,10 +23,12 @@
         </div>
         <!--选择列表-->
         <van-divider class="line"></van-divider>
+        <!--时间tab选择-->
         <div class="list-tabs"  v-if="showAddressPop">
           <button  :class="site?'active-class':'un-active-class'" @click="changeAddress('village')">小区站点</button>
           <button  :class="!site?'active-class':'un-active-class'" @click="changeAddress('subway')">潞城地铁站</button>
         </div>
+        <!--地址列表-->
         <div class="address-list-container"  v-if="showAddressPop">
           <SelectList :areaList="areaListOne" @getSelectedValue="getSelectedValueVillage" class="width-style"/>
           <SelectList :areaList="areaListTwo"  @getSelectedValue="getSelectedValueSubway" class="width-style"/>
@@ -39,6 +41,7 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
 import { Divider, Popup } from 'vant';
 import CarpoolingButton from '@component/CarpoolingButton.vue';
 import SelectList from './AddressSelectList.vue';
@@ -54,28 +57,7 @@ export default {
       subwaySite: '请选择出发地点',
       buttonText: '请选择出发地点',
       confirmAddressValue: '',
-      areaList: {
-        province_list: {
-          110000: '北京市',
-          120000: '天津市',
-          130000: '河北省',
-          140000: '山西省',
-          150000: '内蒙古自治区',
-          210000: '辽宁省',
-          220000: '吉林省',
-        },
-      },
-      areaListOne: {
-        province_list: {
-          110000: '北京市',
-          120000: '天津市',
-          130000: '河北省',
-          140000: '山西省',
-          150000: '内蒙古自治区',
-          210000: '辽宁省',
-          220000: '吉林省',
-        },
-      },
+      areaListOne: {},
       areaListTwo: {},
     };
   },
@@ -96,15 +78,39 @@ export default {
     showAddressPop() {
       this.showPop = this.showAddressPop;
     },
+    // 格式化地址选项
+    formatVillageStations(value) {
+      this.$set(this.areaListOne, 'province_list', value);
+    },
+    formatSubwayStations(value) {
+      this.$set(this.areaListTwo, 'province_list', value);
+    },
     // 设置初始地点选择
     showPop() {
       this.site = true;
-      this.areaListOne = this.areaList;
       this.areaListTwo = {};
       this.buttonText = '请选择出发地点';
       this.confirmAddressValue = '';
       this.villageSite = '请选择出发地点';
       this.subwaySite = '请选择出发地点';
+      this.$set(this.areaListOne, 'province_list', this.formatVillageStations);
+    },
+  },
+  computed: {
+    ...mapState('passenger', ['villageStations', 'subwayStations']),
+    formatVillageStations() {
+      const currentStations = {};
+      for (let index = 0; index < this.villageStations.length; index += 1) {
+        currentStations[index] = this.villageStations[index];
+      }
+      return currentStations;
+    },
+    formatSubwayStations() {
+      const currentStations = {};
+      for (let i = 0; i < this.subwayStations.length; i += 1) {
+        currentStations[i] = this.subwayStations[i];
+      }
+      return currentStations;
     },
   },
   methods: {
@@ -116,13 +122,13 @@ export default {
     changeAddress(site) {
       if (site === 'village') {
         this.site = true;
-        this.areaListOne = this.areaList;
+        this.$set(this.areaListOne, 'province_list', this.formatVillageStations);
         this.areaListTwo = {};
         this.buttonText = this.villageSite;
       } else {
         this.site = false;
         this.areaListOne = {};
-        this.areaListTwo = this.areaList;
+        this.$set(this.areaListTwo, 'province_list', this.formatSubwayStations);
         this.buttonText = this.subwaySite;
       }
     },
@@ -165,7 +171,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  .popContainer{
+  .addressPopContainer{
     .contentSelect{
       height: 356px;
       background: #FFFFFF;

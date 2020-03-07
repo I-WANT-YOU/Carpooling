@@ -1,6 +1,6 @@
 <template>
   <!--遮罩层-->
-  <div class="popContainer">
+  <div class="datePopContainer">
     <van-popup
       v-model="showPop"
       :close-on-click-overlay="false"
@@ -21,8 +21,8 @@
         <!--选择列表-->
         <van-divider class="line"></van-divider>
         <div class="list-tabs">
-          <button  :class="date?'active-class':'un-active-class'" @click="changeDate('today')">今天</button>
-          <button  :class="!date?'active-class':'un-active-class'" @click="changeDate('tomorrow')">明天</button>
+          <button  :class="date==='today'?'active-class':'un-active-class'" @click="changeDate('today')">今天</button>
+          <button  :class="date==='tomorrow'?'active-class':'un-active-class'" @click="changeDate('tomorrow')">明天</button>
         </div>
         <div class="address-list-container">
           <DateSelectList :initDateSelectList="initDateSelectList"  class="width-style" @getCurrentDateValue="getCurrentDateValue"/>
@@ -44,11 +44,11 @@ export default {
   name: 'DateSelect',
   data() {
     return {
-      date: true, // 激活tabs
+      date: 'today', // 激活tabs
       showPop: false,
       buttonText: '确认00:00出发',
       initDateSelectList: 0, // 初始化时间选项的数值
-      selectedDateValue: '', // 确认出发时间
+      selectedDateValue: '00:00', // 确认出发时间
     };
   },
   props: {
@@ -69,22 +69,26 @@ export default {
     CarpoolingButton,
   },
   methods: {
-    /* 非接口方法 */
+    /*
+     非接口方法
+     */
     changeDate(date) {
       if (date === 'today') {
-        this.date = true;
+        this.date = 'today';
         this.initDateSelectList += 1;
         this.buttonText = '确认00:00出发';
       } else {
-        this.date = false;
+        this.date = 'tomorrow';
         this.initDateSelectList += 1;
         this.buttonText = '确认00:00出发';
       }
     },
+    // 关闭弹窗 初始化数据
     close() {
       this.$emit('closeDatePop', false);
       this.buttonText = '确认00:00出发';
       this.initDateSelectList += 1;
+      this.date = 'today';
     },
     // 获取选中时间
     getCurrentDateValue(value) {
@@ -94,7 +98,8 @@ export default {
     // 确认选中的时间
     confirmSelectedDate() {
       this.initDateSelectList += 1;
-      this.$emit('getSelectedDate', this.selectedDateValue);
+      const currentSelectedDataValue = JSON.stringify({ day: this.date, time: this.selectedDateValue });
+      this.$emit('getSelectedDate', currentSelectedDataValue);
       this.close();
     },
   },
@@ -102,7 +107,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  .popContainer{
+  .datePopContainer{
     .contentSelect{
       height: 356px;
       background: #FFFFFF;

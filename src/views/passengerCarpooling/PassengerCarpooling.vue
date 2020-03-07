@@ -3,19 +3,42 @@
       <!--头部-->
       <CarpoolingHeader/>
       <!--乘车信息-->
-      <RideDetailCard userType="passenger" @showAddress="showAddress" @showDate="showDate" :confirmFromAddress="confirmFromAddress" :confirmToAddress="confirmToAddress" :confirmDate="confirmDate"/>
+      <div class="title-info">
+        预约即可拼车
+      </div>
+      <RideDetailCard
+        userType="passenger"
+        @showAddress="showAddress"
+        @showDate="showDate"
+        @showPassengerNumber="showPassengerNumber"
+        @showBindingPhone="showBindingPhonePop=true"
+        :confirmFromAddress="confirmFromAddress"
+        :confirmToAddress="confirmToAddress"
+        :confirmDate="confirmDate"
+        :confirmPassengerNumber="confirmPassengerNumber"/>
       <!--地址选择列表-->
-      <AddressSelect :showAddressPop="showAddressPop" :addressSelectValue="addressSelectValue" @closeAddressPop="showAddressPop=false" @getConfirmAddress="getConfirmAddress"/>
+      <AddressSelect
+        :showAddressPop="showAddressPop"
+        :addressSelectValue="addressSelectValue"
+        @closeAddressPop="showAddressPop=false"
+        @getConfirmAddress="getConfirmAddress"/>
       <!--时间选择列表-->
       <DateSelect :showDatePop="showDatePop" @closeDatePop="showDatePop=false" @getSelectedDate="getSelectedDate"/>
+      <!--乘客人数-->
+      <PassengerNumberSelect :showPassengerNumberPop="showPassengerNumberPop" @closeDatePop="showPassengerNumberPop=false"  @getSelectedPassengerNumber="getSelectedPassengerNumber"/>
+     <!--绑定手机-->
+      <binding-phone :showBindingPhonePop="showBindingPhonePop" @closeBindingPhonePop="showBindingPhonePop=false"  />
     </div>
 </template>
 
 <script>
 import CarpoolingHeader from '@component/CarpoolingHeader.vue';
+import { mapActions } from 'vuex';
 import RideDetailCard from '../components/RideDetailCard.vue';
 import AddressSelect from '../components/AddressSelect.vue';
 import DateSelect from '../components/DateSelect.vue';
+import PassengerNumberSelect from '../components/PassengerNumberSelect.vue';
+import BindingPhone from '../components/BindingPhone.vue';
 
 export default {
   name: 'PassengerCarpooling',
@@ -24,10 +47,13 @@ export default {
       showAddressPop: false, // 地址弹窗
       addressSelectValue: false, // 地址
       showDatePop: false, // 时间弹窗
+      showPassengerNumberPop: false, // 人数弹窗
+      showBindingPhonePop: false, // 绑定手机号弹窗
       confirmFromAddress: '', // 出发地
       confirmToAddress: '', // 目的地
       addressType: '', // 区分是出发还是目的地
       confirmDate: '', // 出发时间
+      confirmPassengerNumber: '', // 乘车人数
     };
   },
   components: {
@@ -35,16 +61,39 @@ export default {
     RideDetailCard,
     AddressSelect,
     DateSelect,
+    PassengerNumberSelect,
+    BindingPhone,
   },
   methods: {
-    // 展示地点
+    ...mapActions('passenger', ['getSubwayStations', 'getVillageStations']),
+    /*
+     接口方法
+    */
+    // 获取站点列表
+    async getAllSites() {
+      try {
+        this.showLoadingToastWithoutOverlay();
+        await this.getVillageStations('1');
+        await this.getSubwayStations('2');
+        this.clearLoadingToast();
+      } catch (e) {
+        this.clearLoadingToast();
+        this.showToast(e);
+      }
+    },
+    // 展示地点pop
     showAddress(value) {
       this.showAddressPop = true;
       this.addressType = value;
       this.addressSelectValue = true;
     },
+    // 展示时间pop
     showDate() {
       this.showDatePop = true;
+    },
+    // 展示人数pop
+    showPassengerNumber() {
+      this.showPassengerNumberPop = true;
     },
     // 获取行程地点
     getConfirmAddress(value) {
@@ -56,8 +105,15 @@ export default {
     },
     // 获取出发时间
     getSelectedDate(value) {
-      this.confirmDate = `${value}出发`;
+      this.confirmDate = value;
     },
+    // 获取乘车人数
+    getSelectedPassengerNumber(value) {
+      this.confirmPassengerNumber = value;
+    },
+  },
+  mounted() {
+    this.getAllSites(); // 获取多有站点
   },
 };
 </script>
@@ -68,6 +124,14 @@ export default {
     height: 100%;
     background:url("./images/bg.png") no-repeat;
     background-size: 100vw 100vh;
+    .title-info{
+      height: 56px;
+      margin-left: 24px;
+      font-size: 16px;
+      color: #333333;
+      letter-spacing: 0;
+      line-height: 56px;
+    }
   }
 
 </style>

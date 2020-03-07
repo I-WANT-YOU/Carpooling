@@ -31,6 +31,7 @@ export default {
     height: 44px;
     display: flex;
     line-height: 44px;
+    background: #FFFFFF;
     .header-icon , .header-extend{
       width: 100px;
       display: flex;

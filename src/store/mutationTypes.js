@@ -1,6 +1,12 @@
-// home
-export const GET_NEWS_LIST = 'GET_NEWS_LIST';
+// PASSENGER   乘客
+export const GET_PHONE_CODE = 'GET_PHONE_CODE'; // 手机验证码
+export const GET_VILLAGE_STATIONS = 'GET_VILLAGE_STATIONS'; // 站点
+export const GET_SUBWAY_STATIONS = 'GET_SUBWAY_STATIONS'; // 站点
+export const GET_TRAVEL_LIST = 'GET_TRAVEL_LIST';// 司机获取行程
+export const GET_ORDER_TRAVEL_LIST = '司机获取行程GET_ORDER_TRAVEL_LIST';//
 
-// news
-export const GET_NEWS_DETAIL = 'GET_NEWS_DETAIL';
-export const GET_NEWS_PAGE_LIST = 'GET_NEWS_PAGE_LIST';
+
+// 司机
+export const GET_TODAY_TRAVEL_LIST = 'GET_TODAY_TRAVEL_LIST'; // 获取行程
+export const GET_TOMORROW_TRAVEL_LIST = 'GET_TOMORROW_TRAVEL_LIST'; // 获取行程
+export const GET_REFRESH_TRAVEL_LIST = 'GET_REFRESH_TRAVEL_LIST'; // 刷新行程

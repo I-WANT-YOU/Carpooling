@@ -16,7 +16,7 @@ export const handlerResponse = (response) => {
 };
 
 export const handlerSuccessResponse = (response) => {
-  if (!response || !(response.code === 0)) {
+  if (!response || !(response.code === 1)) {
     return Promise.reject(response.msg);
   }
   return Promise.resolve(response.data);

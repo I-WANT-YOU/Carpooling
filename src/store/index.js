@@ -1,8 +1,8 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
-import home from './modules/home';
 import app from './modules/app';
-import news from './modules/news';
+import passenger from './modules/passenger';
+import driver from './modules/driver';
 
 Vue.use(Vuex);
 
@@ -14,8 +14,8 @@ export default new Vuex.Store({
   actions: {
   },
   modules: {
-    home,
     app,
-    news,
+    passenger,
+    driver,
   },
 });
