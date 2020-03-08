@@ -43,7 +43,7 @@ export default {
           if (currentDate - showDate < 0) {
             this.tipInfo = '司机已接单，请准时到达上车地点';
           } else {
-            this.tipInfo = '您的行程一开始';
+            this.tipInfo = '您的行程已开始';
           }
         }
       },

@@ -10,7 +10,7 @@
         </div>
       </div>
     <EmptySchedule v-if="travelList.length===0" class="content-schedule"/>
-    <DriverSchedule v-else class="content-schedule" :driverTravelList="driverTravelList" @refreshTravelList="refreshTravelList"/>
+    <DriverSchedule v-else class="content-schedule" :driverTravelList="driverTravelList" @refreshTravelList="refreshTravelList" @refreshSchedule="refreshSchedule"/>
   </div>
 
 </template>
@@ -55,7 +55,7 @@ export default {
     },
   },
   methods: {
-    ...mapActions('driver', ['getTravelList']),
+    ...mapActions('driver', ['getTravelList', 'refreshTravel']),
     /*
     接口方法
      */
@@ -72,6 +72,21 @@ export default {
       }
     },
 
+    // 司机单个刷新行程
+    async refreshSchedule() {
+      try {
+        if (this.activeDate === 'today') {
+          this.getDriverTravelList('1');
+          this.showToast('刷新成功');
+        } else {
+          this.getDriverTravelList('2');
+          this.showToast('刷新成功');
+        }
+      } catch (e) {
+        this.showToast(e);
+      }
+    },
+
     // 改变时间
     changeDate(value) {
       this.activeDate = value;
@@ -81,22 +96,13 @@ export default {
         this.getDriverTravelList('2');
       }
     },
-    // 刷新列表
+
+    // 刷新列表(司机撤销之后刷新整体数据)
     async refreshTravelList() {
-      console.log(1);
-      await this.getDriverTravelList();
       if (this.activeDate === 'today') {
-        if (this.todayDriverTravelList.length === 0) {
-          this.scheduleIsEmpty = true;
-        } else {
-          this.scheduleIsEmpty = false;
-          this.driverTravelList = this.todayDriverTravelList;
-        }
-      } else if (this.tomorrowDriverTravelList.length === 0) {
-        this.scheduleIsEmpty = true;
+        this.getDriverTravelList('1');
       } else {
-        this.scheduleIsEmpty = false;
-        this.driverTravelList = this.tomorrowDriverTravelList;
+        this.getDriverTravelList('2');
       }
     },
   },

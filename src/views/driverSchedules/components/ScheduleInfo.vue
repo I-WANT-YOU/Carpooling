@@ -19,7 +19,6 @@
 </template>
 
 <script>
-import { mapActions, mapState } from 'vuex';
 import { Image } from 'vant';
 import CarpoolingShortButton from '@component/CarpoolingShortButton.vue';
 import rightArrow from '@views/components/images/rightArrow.png';
@@ -57,26 +56,11 @@ export default {
     CarpoolingShortButton,
     'van-image': Image,
   },
-  computed: {
-    ...mapState('driver', ['refreshTravelList']),
-  },
   methods: {
-    ...mapActions('driver', ['refreshTravel']),
-    /*
-     接口方法
-    */
-    // 司机刷新行程
-    async refreshDriverSchedule(params) {
-      try {
-        await this.refreshTravel(params);
-        this.showToast('刷新成功');
-      } catch (e) {
-        this.showToast(e);
-      }
-    },
+
     // 刷新行程
-    async refreshSchedule() {
-      await this.refreshDriverSchedule(this.scheduleInfo.id);
+    refreshSchedule() {
+      this.$emit('refreshSchedule', this.scheduleInfo.id);
     },
     // 司机撤销行程或者完成行程
     confirmAction() {

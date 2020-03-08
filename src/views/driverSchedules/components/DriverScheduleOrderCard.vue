@@ -78,7 +78,7 @@ export default {
         await this.confirmLink(params);
         this.clearLoadingToast();
         this.showToast('接受预订成功');
-        this.$emit('refreshSchedule');
+        this.$emit('refreshScheduleList');
       } catch (e) {
         this.clearLoadingToast();
         this.showToast(e);
@@ -92,7 +92,7 @@ export default {
         await this.rejectLink(params); // linkId
         this.clearLoadingToast();
         this.showToast('接受预订成功');
-        this.$emit('refreshSchedule');
+        this.$emit('refreshScheduleList');
       } catch (e) {
         this.clearLoadingToast();
         this.showToast(e);

@@ -11,13 +11,14 @@
           :driverTravelListIndex="driverTravelListIndex"
           @cancelSchedule="cancelSchedule"
           @completeSchedule="completeSchedule"
+          @refreshSchedule="refreshSchedule"
         />
         <div  v-for="(passengerInfoItem,passengerInfoIndex) in driverTravelListItem.links" :key="passengerInfoIndex">
           <MyLineOne class="myLine"/>
           <DriverScheduleOrderCard
             :isConfirm="driverTravelListItem.travel.travelStatus!=='idle'"
             :passengerInfoItem="passengerInfoItem"
-            @refreshSchedule="refreshSchedule"
+            @refreshScheduleList="refreshScheduleList"
           />
         </div>
         <!--微信分享-->
@@ -93,6 +94,7 @@ export default {
     /*
     接口方法
     */
+
     // 司机完成行程
     async driverCompleteTravel(params) {
       try {
@@ -106,6 +108,7 @@ export default {
         this.showToast(e);
       }
     },
+
     // 司机撤销行程
     async driverCancelTravel() {
       try {
@@ -121,26 +124,35 @@ export default {
         this.showToast(e);
       }
     },
+
+    // 司机刷新行程(单个行程)
+    refreshSchedule(params) {
+      this.$emit('refreshSchedule', params);
+    },
+
     // 发布行程
     publishSchedule() {
       this.$router.push('/driverReleaseSchedule');
     },
+
     // 司机取消行程
     cancelSchedule(value) {
       this.travelId = value;
       this.showConfirmPop = true;
     },
+
     // 司机完成行程
     completeSchedule(value) {
       this.travelId = JSON.parse(value).id;
       this.completedIndex = JSON.parse(value).index;
       this.driverCompleteTravel(this.travelId);
     },
+
     // 刷新行程
-    refreshSchedule() {
-      console.log('刷新');
+    refreshScheduleList() {
       this.$emit('refreshTravelList');
     },
+
     // 微信分享行程
     shareSchedule() {
       wx.config({

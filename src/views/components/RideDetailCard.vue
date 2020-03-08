@@ -153,7 +153,7 @@ export default {
         await this.searchTravel(currentParams);
         this.clearLoadingToast();
         if (this.travelList.length === 0) {
-          this.showToast('当前行程为空');
+          this.showToast('没有符合条件的行程,请重新筛选');
         }
       } catch (error) {
         this.clearLoadingToast();
