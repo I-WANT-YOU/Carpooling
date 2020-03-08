@@ -9,14 +9,14 @@
           <span class="tab" :class="activeDate==='tomorrow'?'activeTab':''"  @click="changeDate('tomorrow')">明天</span>
         </div>
       </div>
-    <EmptySchedule v-if="scheduleIsEmpty" class="content-schedule"/>
-    <DriverSchedule class="content-schedule" v-else :driverTravelList="driverTravelList" @refreshTravelList="refreshTravelList"/>
+    <EmptySchedule v-if="travelList.length===0" class="content-schedule"/>
+    <DriverSchedule v-else class="content-schedule" :driverTravelList="driverTravelList" @refreshTravelList="refreshTravelList"/>
   </div>
 
 </template>
 
 <script>
-import { mapActions, mapGetters } from 'vuex';
+import { mapActions, mapGetters, mapState } from 'vuex';
 import CarpoolingHeader from '@component/CarpoolingHeader.vue';
 import MyLine from '../components/MyLine.vue';
 import EmptySchedule from './components/EmptySchedule.vue';
@@ -28,7 +28,6 @@ export default {
     return {
       activeDate: 'today',
       scheduleIsEmpty: false,
-      driverTravelList: [],
     };
   },
   components: {
@@ -38,69 +37,53 @@ export default {
     DriverSchedule,
   },
   computed: {
-    ...mapGetters('driver', ['todayDriverTravelList', 'tomorrowDriverTravelList', 'refreshDriverTravelList']),
+    ...mapGetters('driver', ['refreshDriverTravelList', 'driverTravelList']),
+    ...mapState('driver', ['travelList']),
   },
   watch: {
-    activeDate(value) {
-      if (value === 'today') {
-        if (this.todayDriverTravelList.length === 0) {
-          this.scheduleIsEmpty = true;
-        } else {
-          this.scheduleIsEmpty = false;
-          this.driverTravelList = this.todayDriverTravelList;
-        }
-      } else if (value === 'tomorrow') {
-        if (this.tomorrowDriverTravelList.length === 0) {
-          this.scheduleIsEmpty = true;
-        } else {
-          this.scheduleIsEmpty = false;
-          this.driverTravelList = this.tomorrowDriverTravelList;
-        }
-      }
-    },
     refreshDriverTravelList(value) {
       let travelId = '';
       if (value.travel.id) {
         travelId = value.travel.id;
       }
-      if (this.activeDate === 'today') {
-        this.todayDriverTravelList.map((item) => {
-          if (item.travel.id === travelId) {
-            item = value;
-          }
-          return item;
-        });
-      } else {
-        this.tomorrowDriverTravelList.map((item) => {
-          if (item.travel.id === travelId) {
-            item = value;
-          }
-          return item;
-        });
-      }
+      this.driverTravelList.map((item) => {
+        if (item.travel.id === travelId) {
+          item = value;
+        }
+        return item;
+      });
     },
   },
   methods: {
-    ...mapActions('driver', ['getTodayTravelList', 'getTomorrowTravelList']),
+    ...mapActions('driver', ['getTravelList']),
     /*
     接口方法
      */
+
     // 获取司机行程
-    async getDriverTravelList() {
+    async getDriverTravelList(params) {
       try {
         this.showLoadingToast();
-        await this.getTodayTravelList('1');
-        await this.getTomorrowTravelList('2');
+        await this.getTravelList(params);
         this.clearLoadingToast();
       } catch (e) {
         this.clearLoadingToast();
+        this.showToast(e);
       }
     },
+
+    // 改变时间
     changeDate(value) {
       this.activeDate = value;
+      if (value === 'today') {
+        this.getDriverTravelList('1');
+      } else {
+        this.getDriverTravelList('2');
+      }
     },
     // 刷新列表
     async refreshTravelList() {
+      console.log(1);
       await this.getDriverTravelList();
       if (this.activeDate === 'today') {
         if (this.todayDriverTravelList.length === 0) {
@@ -117,21 +100,9 @@ export default {
       }
     },
   },
+
   async mounted() {
-    await this.getDriverTravelList();
-    if (this.activeDate === 'today') {
-      if (this.todayDriverTravelList.length === 0) {
-        this.scheduleIsEmpty = true;
-      } else {
-        this.scheduleIsEmpty = false;
-        this.driverTravelList = this.todayDriverTravelList;
-      }
-    } else if (this.tomorrowDriverTravelList.length === 0) {
-      this.scheduleIsEmpty = true;
-    } else {
-      this.scheduleIsEmpty = false;
-      this.driverTravelList = this.tomorrowDriverTravelList;
-    }
+    await this.getDriverTravelList('1');
   },
 };
 </script>

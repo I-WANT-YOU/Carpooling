@@ -19,6 +19,23 @@ class driverService {
     }
   }
 
+  // 司机刷新行程
+  static async refreshTravel(options) {
+    try {
+      const requestOptions = {
+        url: '/lc/travel/refreshTravel',
+        method: 'get',
+        params: {
+          travelId: options, // 出发地
+        },
+      };
+      const response = await request(requestOptions);
+      return handlerResponse(response);
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
   // 司机发布行程
   static async publishTravel(options) {
     try {
@@ -40,22 +57,6 @@ class driverService {
     }
   }
 
-  // 司机刷新行程
-  static async refreshTravel(options) {
-    try {
-      const requestOptions = {
-        url: '/lc/travel/refreshTravel',
-        method: 'get',
-        params: {
-          travelId: options, // 出发地
-        },
-      };
-      const response = await request(requestOptions);
-      return handlerResponse(response);
-    } catch (error) {
-      throw new Error(error);
-    }
-  }
 
   // 司机撤销行程
   static async destroyTravel(options) {

@@ -63,7 +63,7 @@ export default {
     evaluateClick(type) {
       const currentParams = { userId: this.userId, type };
       callApi(this.appraiseUser, '评价成功', currentParams);
-      this.$emit('closeEvaluatePop');
+      this.$emit('closeEvaluatePop', 'refresh');
     },
   },
 };

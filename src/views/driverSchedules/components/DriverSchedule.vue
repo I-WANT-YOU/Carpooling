@@ -21,7 +21,7 @@
           />
         </div>
         <!--微信分享-->
-        <ShareScheduleInfo v-show="driverTravelListItem.travel.travelStatus==='idle'"/>
+        <ShareScheduleInfo v-show="driverTravelListItem.travel.travelStatus==='idle' && driverTravelListItem.travel.seats!==0"/>
       </div>
       <!--拓展位置元素-->
       <div class="empty-content"></div>
@@ -138,6 +138,7 @@ export default {
     },
     // 刷新行程
     refreshSchedule() {
+      console.log('刷新');
       this.$emit('refreshTravelList');
     },
     // 微信分享行程
@@ -186,7 +187,7 @@ export default {
     border-radius: 10px;
   }
   .empty-content{
-    height: 81px;
+    height: 100px;
     width: 100%;
   }
   .releaseSchedule{

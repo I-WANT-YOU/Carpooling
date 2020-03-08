@@ -10,17 +10,29 @@
         <span class="tab" :class="activeDate==='tomorrow'?'activeTab':''"  @click="changeDate('tomorrow')">明天</span>
       </div>
     </div>
+    <!--行程为空的背景-->
+    <div v-if="orderTravelList.length===0" class="emptySchedule">
+      <div class="position-class">
+        <CarpoolingButton buttonText="预约拼车"  @click.native="goToCarpooling"/>
+      </div>
+    </div>
     <!--信息详情-->
-    <div  v-for="(showDataItem,showDataIndex) in passengerOrderTravelList"   :key="showDataIndex" >
-      <TipInfo :passengerStatus="showDataItem.link.status" :startTime = "showDataItem.link.startTime" @refreshSchedule="refreshSchedule"/>
-      <CarOrderCard
-        v-show="orderTravelList.length!==0"
-        :showDataItem="showDataItem.travel"
-        :passengerStatus="showDataItem.travel"
-        :buttonText="currentFormatDate()-currentFormatDate(showDataItem.link.startTime)>0?'完成':'撤销'"
-        @passengerCancelSchedule="passengerCancelSchedule(showDataItem.link.status,showDataItem.link.id)"
-        @passengerCompleteSchedule="passengerCompleteSchedule(showDataItem.link.id,showDataItem.travel.userId)"
-        @toShowEvaluatePop="showEvaluatePop=true"/>
+    <div  v-else class="info-container">
+      <div v-for="(showDataItem,showDataIndex) in passengerOrderTravelList"   :key="showDataIndex" >
+        <TipInfo :passengerStatus="showDataItem.link.status" :startTime = "showDataItem.link.startTime" @refreshSchedule="refreshSchedule"/>
+        <CarOrderCard
+          v-show="orderTravelList.length!==0"
+          :showDataItem="showDataItem.travel"
+          :passengerStatus="showDataItem.travel"
+          :buttonText="currentFormatDate()-currentFormatDate(showDataItem.link.startTime)>0?'完成':'撤销'"
+          @passengerCancelSchedule="passengerCancelSchedule(showDataItem.link.status,showDataItem.link.id)"
+          @passengerCompleteSchedule="passengerCompleteSchedule(showDataItem.link.id,showDataItem.travel.userId)"
+          @toShowEvaluatePop="showEvaluatePop=true"/>
+      </div>
+      <div class="position-empty"></div>
+      <div class="position-class">
+        <CarpoolingButton buttonText="预约拼车"  @click.native="goToCarpooling"/>
+      </div>
     </div>
     <!--普通撤销-->
     <ConfirmPop :showConfirmPop="showNormalConfirmPop" @closeConfirmPop="showNormalConfirmPop=false" @confirmAction=passengerCancelLink>
@@ -38,7 +50,7 @@
       </div>
     </ConfirmPop>
     <!--评价弹窗-->
-    <EvaluatePop :showEvaluatePop="showEvaluatePop" @closeEvaluatePop="showEvaluatePop=false" :userId=userId />
+    <EvaluatePop :showEvaluatePop="showEvaluatePop" @closeEvaluatePop="closeEvaluatePop" :userId=userId />
   </div>
 </template>
 
@@ -48,6 +60,7 @@ import { callApi } from '@utils/tools';
 import { mapActions, mapState, mapGetters } from 'vuex';
 import { Image } from 'vant';
 import CarpoolingHeader from '@component/CarpoolingHeader.vue';
+import CarpoolingButton from '@component/CarpoolingButton.vue';
 import ConfirmPop from '@component/ConfirmPop.vue';
 import MyLine from '../components/MyLine.vue';
 import TipInfo from '../components/TipInfo.vue';
@@ -78,6 +91,7 @@ export default {
     EvaluatePop,
     MyLine,
     TipInfo,
+    CarpoolingButton,
   },
   computed: {
     ...mapState('passenger', ['orderTravelList']),
@@ -94,37 +108,14 @@ export default {
     接口方法
     */
     // 乘客获取行程
-    async passengerGetTravel(hasMessage) {
+    async passengerGetTravel(params) {
       try {
         this.showLoadingToast();
-        if (this.activeDate === 'today') {
-          await this.getTravel('1');
-          if (this.orderTravelList.length === 0) {
-            if (hasMessage && hasMessage !== '') {
-              this.showToast('您今天的行程为空');
-            }
-            await this.getTravel('2');
-            if (this.orderTravelList.length === 0) {
-              this.$router.push('/passengerCarpooling');
-            } else {
-              this.activeDate = 'tomorrow';
-            }
-          }
-        } else {
-          await this.getTravel('2');
-          if (this.orderTravelList.length === 0) {
-            if (hasMessage && hasMessage !== '') {
-              this.showToast('您明天的行程为空');
-            }
-            await this.getTravel('1');
-            if (this.orderTravelList.length === 0) {
-              this.$router.push('/passengerCarpooling');
-            } else {
-              this.activeDate = 'today';
-            }
-          }
-        }
+        await this.getTravel(params);
         this.clearLoadingToast();
+        if (this.orderTravelList.length === 0) {
+          this.showToast('您的行程为空');
+        }
       } catch (e) {
         this.clearLoadingToast();
         if (e === '请先绑定手机号') {
@@ -135,7 +126,7 @@ export default {
       }
     },
 
-    //  乘客完成行程
+    //  乘客完成行程(调用接口并且弹出评价弹窗)
     async passengerCompleteLink() {
       try {
         this.showLoadingToast();
@@ -155,7 +146,11 @@ export default {
         await this.cancelLink(this.linkId);
         this.clearLoadingToast();
         this.showToast('取消成功');
-        this.passengerGetTravel(); // 刷新数据
+        if (this.activeDate === 'today') {
+          this.passengerGetTravel('1'); // 刷新数据
+        } else {
+          this.passengerGetTravel('2'); // 刷新数据
+        }
       } catch (e) {
         this.clearLoadingToast();
         this.showToast(e);
@@ -168,8 +163,13 @@ export default {
     // 改变时间
     async changeDate(value) {
       this.activeDate = value;
-      await this.passengerGetTravel('hasMessage');
+      if (value === 'today') {
+        await this.passengerGetTravel('1');
+      } else {
+        await this.passengerGetTravel('2');
+      }
     },
+
     // 乘客取消行程
     passengerCancelSchedule(state, linkId) {
       this.linkId = linkId;
@@ -186,6 +186,7 @@ export default {
       this.userId = userId;
       this.passengerCompleteLink();
     },
+
     // 刷新乘客列表
     refreshSchedule() {
       if (this.activeDate === 'today') {
@@ -194,12 +195,30 @@ export default {
         callApi(this.getTravel, '刷新成功', '2');
       }
     },
+
+    // 关闭评价弹窗
+    closeEvaluatePop(value) {
+      this.showEvaluatePop = false;
+      if (value === 'refresh') {
+        if (this.activeDate === 'today') {
+          this.passengerGetTravel('1');
+        } else {
+          this.passengerGetTravel('2');
+        }
+      }
+    },
+
+    // 跳转到拼车页面
+    goToCarpooling() {
+      this.$router.push('/passengerCarpooling');
+    },
   },
+
   created() {
     this.showLoadingToast();
   },
   async mounted() {
-    await this.passengerGetTravel('3');
+    await this.passengerGetTravel('1');
   },
   beforeDestroy() {
     this.clearLoadingToast();
@@ -209,6 +228,29 @@ export default {
 
 <style lang="scss" scoped>
 .activeOrder{
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+  /*空白背景*/
+  .position-empty{
+    width: 100%;
+    height: 90px;
+    background:white;
+  }
+  .position-class{
+    position: fixed;
+    width: 100%;
+    height: 90px;
+    background:white;
+    bottom: 0;
+  }
+  .emptySchedule{
+    position: relative;
+    width: 100%;
+    flex-grow: 1;
+    background: url("../../assets/short.png") no-repeat;
+    background-size: 100% 100%;
+  }
   .tabs{
     margin-bottom: 10px;
     background: #FFFFFF;

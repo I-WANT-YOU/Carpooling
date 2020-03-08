@@ -8,7 +8,7 @@
           <span>{{passengerShowData.fromAddress}}-{{passengerShowData.toAddress+' '}}</span>
           <span>{{' '+passengerShowData.passengerNumber}}位</span>
         </div>
-        <div class="button">
+        <div class="button" @click="filterAgain">
           <van-image :src="filterButton" class="filterButton"/>
         </div>
       </div>
@@ -17,6 +17,7 @@
         :key="showDataIndex"
         :showDataItem="showDataItem"
         :passengerShowData="passengerShowData"
+        buttonText="拼车"
       />
     </div>
 </template>
@@ -86,6 +87,11 @@ export default {
     */
     passengerOrderSchedule() {
       this.passengerOrderLink(this.passengerShowData);
+    },
+
+    // 重新筛选订单
+    filterAgain() {
+      this.$router.push('/passengerCarpooling');
     },
   },
   async mounted() {

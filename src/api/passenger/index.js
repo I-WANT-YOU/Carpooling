@@ -21,11 +21,8 @@ class NewsService {
   static async getStations(options) {
     try {
       const requestOptions = {
-        url: '/lc/travel/getStations',
+        url: `/lc/travel/getStations?type=${options}`,
         method: 'get',
-        params: {
-          type: options,
-        },
       };
       const response = await request(requestOptions);
       return handlerResponse(response);
