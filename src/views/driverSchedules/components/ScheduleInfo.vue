@@ -3,18 +3,20 @@
       <div class="info">
         <!--撤销或者完成按钮-->
         <CarpoolingShortButton :buttonText="orderState" @click.native="confirmAction"/>
+        <!--时间-->
         <div class="date-info">
           <van-image :src="date" class="date-icon"/>
           <span class="date-text">{{scheduleInfo.startTime}}</span>
         </div>
+        <!--地址-->
         <div class="address-info">
           <span class="address-text">{{scheduleInfo.fromStation}}</span>
           <van-image :src="rightArrow" class="arrow-icon"/>
           <span class="address-text">{{scheduleInfo.toStation}}</span>
         </div>
+        <!--刷新行程-->
+        <van-image v-if="!isConfirm" :src="refreshButton" class="refresh" @click="refreshSchedule"></van-image>
       </div>
-      <!--刷新行程-->
-      <van-image v-if="!isConfirm" :src="refreshButton" class="refresh" @click="refreshSchedule"></van-image>
     </div>
 </template>
 
@@ -83,17 +85,17 @@ export default {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  width: 327px;
+  width: 330px;
   height: 68px;
   line-height: 68px;
-  padding: 0 14px;
   margin: auto;
   .info{
     display: flex;
     align-items: center;
     flex-grow: 1;
+    justify-content: space-between;
     .date-info{
-       margin-left: 20px;
+      /* margin-left: 10px;*/
       .date-icon{
         width: 16px;
         height: 16px;
@@ -106,7 +108,7 @@ export default {
       }
     }
     .address-info{
-       margin-left: 15px;
+      /* margin-left: 15px;*/
       .arrow-icon{
         width: 16px;
         height: 16px;

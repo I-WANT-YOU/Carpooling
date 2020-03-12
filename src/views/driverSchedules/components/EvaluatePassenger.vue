@@ -14,7 +14,6 @@
         @getSignal="getSignal"
         :key="driverTravelListIndex"/>
       <div class="content-buttons">
-        <button class="cancel"  @click="closePop">取消</button>
         <button class="confirm" @click="confirmDriverEvaluate">确认</button>
       </div>
     </div>
@@ -59,25 +58,34 @@ export default {
   },
   methods: {
     ...mapActions('passenger', ['appraiseUser']),
-    // 关闭弹窗
-    closePop() {
-      this.$emit('closeEvaluatePassengerPop');
-    },
+
     // 获取司机好评
     getSignal(data) {
       const currentData = JSON.parse(data);
-      const type = currentData.signal === 'good' ? 1 : 2;
-      this.$set(this.evaluateList, currentData.index, type);
+      if (currentData.signal === 'good') {
+        this.$set(this.evaluateList, currentData.index, '1');
+      } else if (currentData.signal === 'bad') {
+        this.$set(this.evaluateList, currentData.index, '-1');
+      } else {
+        this.$set(this.evaluateList, currentData.index, '0');
+      }
     },
+
     // 提交司机评价
-    confirmDriverEvaluate() {
+    async confirmDriverEvaluate() {
+      let values = '';
       for (let index = 0; index < this.evaluateList.length; index += 1) {
         if (this.evaluateList[index] !== null) {
-          const currentParams = { userId: this.evaluateTravelList[index].userId, type: this.evaluateList[index] };
-          callApi(this.appraiseUser, '', currentParams);
+          if (index === this.evaluateList.length - 1) {
+            values = this.evaluateList[index];
+          } else {
+            values = `${this.evaluateList[index]},`;
+          }
         }
       }
-      this.closePop();
+      const currentParams = { travelId: this.evaluateTravelList[0].travelId, value: values, type: '1' };
+      await callApi(this.appraiseUser, '评价成功', currentParams);
+      this.$emit('closeEvaluatePassengerPop');
     },
   },
 };
@@ -101,10 +109,10 @@ export default {
     display: flex;
     margin: 20px auto 0;
     background: #FFFFFF;
-    justify-content: space-between;
+    justify-content: center;
     >button{
       border-radius: 10px;
-      width: 120px;
+      width: 320px;
       height: 40px;
       margin-bottom: 28px;
       border: none;
@@ -112,11 +120,6 @@ export default {
       letter-spacing: 1px;
       text-align: center;
       line-height: 23.8px;
-    }
-    .cancel{
-      background: rgba(0,0,0,0.05);
-
-      color: #192848;
     }
     .confirm{
       background: #309CF1;

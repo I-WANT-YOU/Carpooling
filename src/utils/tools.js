@@ -13,9 +13,10 @@ export const callApi = async (fun, message, params = null) => {
     if (message && message !== '') {
       Toast(message);
     }
+    return true;
   } catch (e) {
-    console.log(e);
     Toast.clear();
     Toast(e);
+    return false;
   }
 };

@@ -101,8 +101,8 @@ export default {
         this.showLoadingToast();
         await this.overTravel(params);
         this.clearLoadingToast();
-        this.showEvaluateConfirmPop = true;// 评价弹窗
-        this.evaluateTravelList = this.driverTravelList[this.completedIndex].links;
+
+
       } catch (e) {
         this.clearLoadingToast();
         this.showToast(e);
@@ -143,9 +143,9 @@ export default {
 
     // 司机完成行程
     completeSchedule(value) {
-      this.travelId = JSON.parse(value).id;
       this.completedIndex = JSON.parse(value).index;
-      this.driverCompleteTravel(this.travelId);
+      this.evaluateTravelList = this.driverTravelList[this.completedIndex].links;
+      this.showEvaluateConfirmPop = true;// 评价弹窗
     },
 
     // 刷新行程

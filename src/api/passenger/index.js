@@ -162,15 +162,16 @@ class NewsService {
     }
   }
 
-  // 乘客评价司机
+  // 乘客评价司机或者司机评价乘客
   static async appraiseUser(options) {
     try {
       const params = {
-        userId: options.userId,
-        type: options.type,
+        travelid: options.travelId, // 行程id
+        value:  options.value, // 评价内容:1,0,-1分别表示好评,不做评价,差评;司机评价乘客，按照预定顺序，以,分隔。
+        type:  options.type, // 1司机评价乘客 2 乘客评价司机
       };
       const requestOptions = {
-        url: '/lc/user/appraiseUser',
+        url: '/lc/user/appraiseAndOver',
         method: 'post',
         params,
       };

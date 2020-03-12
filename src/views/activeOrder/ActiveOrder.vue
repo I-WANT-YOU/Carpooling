@@ -26,7 +26,7 @@
           :passengerStatus="showDataItem.travel"
           :buttonText="currentFormatDate()-currentFormatDate(showDataItem.link.startTime)>0?'完成':'撤销'"
           @passengerCancelSchedule="passengerCancelSchedule(showDataItem.link.status,showDataItem.link.id)"
-          @passengerCompleteSchedule="passengerCompleteSchedule(showDataItem.link.id,showDataItem.travel.userId)"
+          @passengerCompleteSchedule="passengerCompleteSchedule(showDataItem.link.travelId)"
           @toShowEvaluatePop="showEvaluatePop=true"/>
       </div>
       <div class="position-empty"></div>
@@ -50,7 +50,7 @@
       </div>
     </ConfirmPop>
     <!--评价弹窗-->
-    <EvaluatePop :showEvaluatePop="showEvaluatePop" @closeEvaluatePop="closeEvaluatePop" :userId=userId />
+    <EvaluatePop :showEvaluatePop="showEvaluatePop" @closeEvaluatePop="closeEvaluatePop" :travelId=travelId />
   </div>
 </template>
 
@@ -80,7 +80,7 @@ export default {
       showEvaluatePop: false, // 评价弹窗
       linkId: '', // 用于取消预定
       activeDate: 'today',
-      userId: '', // 评价
+      travelId: '', // 评价使用
     };
   },
   components: {
@@ -107,6 +107,7 @@ export default {
     /*
     接口方法
     */
+
     // 乘客获取行程
     async passengerGetTravel(params) {
       try {
@@ -123,19 +124,6 @@ export default {
         } else {
           this.showToast(e);
         }
-      }
-    },
-
-    //  乘客完成行程(调用接口并且弹出评价弹窗)
-    async passengerCompleteLink() {
-      try {
-        this.showLoadingToast();
-        await this.overLink(this.linkId);
-        this.clearLoadingToast();
-        this.showEvaluatePop = true;
-      } catch (e) {
-        this.clearLoadingToast();
-        this.showToast(e);
       }
     },
 
@@ -160,6 +148,7 @@ export default {
     /*
     非接口方法
     */
+
     // 改变时间
     async changeDate(value) {
       this.activeDate = value;
@@ -180,11 +169,11 @@ export default {
       }
     },
 
+
     // 乘客完成行程
-    passengerCompleteSchedule(linkId, userId) {
-      this.linkId = linkId;
-      this.userId = userId;
-      this.passengerCompleteLink();
+    passengerCompleteSchedule(travelId) {
+      this.travelId = travelId;
+      this.showEvaluatePop = true;
     },
 
     // 刷新乘客列表

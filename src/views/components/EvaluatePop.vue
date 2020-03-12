@@ -13,7 +13,7 @@
            <van-image :src="good" class="icon-class"/>
            <span class="text-class">好评</span>
          </div>
-          <div class="good evaluate-content" @click="evaluateClick('2')">
+          <div class="good evaluate-content" @click="evaluateClick('-1')">
             <van-image :src="bad" class="icon-class"/>
             <span class="text-class">差评</span>
           </div>
@@ -44,7 +44,7 @@ export default {
       type: Boolean,
       default: false,
     },
-    userId: {
+    travelId: {
       type: String,
       default: '',
     },
@@ -60,10 +60,13 @@ export default {
   },
   methods: {
     ...mapActions('passenger', ['appraiseUser']),
-    evaluateClick(type) {
-      const currentParams = { userId: this.userId, type };
-      callApi(this.appraiseUser, '评价成功', currentParams);
-      this.$emit('closeEvaluatePop', 'refresh');
+    async evaluateClick(value) {
+      const currentParams = { travelId: this.travelId, value, type: '2' };
+      if (await callApi(this.appraiseUser, '评价成功', currentParams)) {
+        this.$emit('closeEvaluatePop', 'refresh');
+      } else {
+        this.$emit('closeEvaluatePop', 'close');
+      }
     },
   },
 };
