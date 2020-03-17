@@ -1,11 +1,10 @@
 <template>
+  <div class="passengerCarpoolingContainer">
     <div class="passengerCarpooling">
       <!--头部-->
       <CarpoolingHeader/>
       <!--乘车信息-->
-      <div class="title-info">
-        预约即可拼车
-      </div>
+      <div class="title-info">预约即可拼车</div>
       <RideDetailCard
         userType="passenger"
         @showAddress="showAddress"
@@ -26,9 +25,11 @@
       <DateSelect :showDatePop="showDatePop" @closeDatePop="showDatePop=false" @getSelectedDate="getSelectedDate"/>
       <!--乘客人数-->
       <PassengerNumberSelect :showPassengerNumberPop="showPassengerNumberPop" @closeDatePop="showPassengerNumberPop=false"  @getSelectedPassengerNumber="getSelectedPassengerNumber"/>
-     <!--绑定手机-->
+      <!--绑定手机-->
       <binding-phone :showBindingPhonePop="showBindingPhonePop" @closeBindingPhonePop="showBindingPhonePop=false"  />
     </div>
+  </div>
+
 </template>
 
 <script>
@@ -119,19 +120,22 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  .passengerCarpooling{
+  .passengerCarpoolingContainer{
     width: 100%;
     height: 100%;
-    background:url("./images/bg.png") no-repeat;
-    background-size: 100vw 100vh;
-    .title-info{
-      height: 56px;
-      margin-left: 24px;
-      font-size: 16px;
-      color: #333333;
-      letter-spacing: 0;
-      line-height: 56px;
+    background-image: linear-gradient(1deg, #FFFFFF 20%, #DCEBF4 86%);
+    .passengerCarpooling{
+      width: 100%;
+      height: 100%;
+      background: url("../../assets/bgImage.png") no-repeat fixed center bottom;
+      .title-info{
+        height: 56px;
+        margin-left: 24px;
+        font-size: 16px;
+        color: #333333;
+        letter-spacing: 0;
+        line-height: 56px;
+      }
     }
   }
-
 </style>

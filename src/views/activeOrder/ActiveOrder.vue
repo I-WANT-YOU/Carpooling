@@ -11,9 +11,11 @@
       </div>
     </div>
     <!--行程为空的背景-->
-    <div v-if="orderTravelList.length===0" class="emptySchedule">
-      <div class="position-class">
-        <CarpoolingButton buttonText="预约拼车"  @click.native="goToCarpooling"/>
+    <div v-if="orderTravelList.length===0" class="emptyScheduleContainer">
+      <div class="emptySchedule">
+        <div class="position-class">
+          <CarpoolingButton buttonText="预约拼车"  @click.native="goToCarpooling"/>
+        </div>
       </div>
     </div>
     <!--信息详情-->
@@ -233,13 +235,20 @@ export default {
     background:white;
     bottom: 0;
   }
-  .emptySchedule{
-    position: relative;
+  .emptyScheduleContainer{
+   display: flex;
+    flex-direction: column;
     width: 100%;
     flex-grow: 1;
-    background: url("../../assets/short.png") no-repeat;
-    background-size: 100% 100%;
+    background-image: linear-gradient(1deg, #FFFFFF 20%, #DCEBF4 86%);
+    .emptySchedule{
+      width: 100%;
+      flex-grow: 1;
+      background: url("../../assets/bgImage.png") no-repeat fixed center center;
+      background-size: 375px 354px;
+    }
   }
+
   .tabs{
     margin-bottom: 10px;
     background: #FFFFFF;

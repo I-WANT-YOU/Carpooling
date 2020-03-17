@@ -22,7 +22,7 @@
           />
         </div>
         <!--微信分享-->
-        <ShareScheduleInfo v-show="driverTravelListItem.travel.travelStatus==='idle' && driverTravelListItem.travel.seats!==0"/>
+        <ShareScheduleInfo v-show="driverTravelListItem.travel.travelStatus==='idle' && driverTravelListItem.travel.seats!==0" @click.native="shareInWeChat(driverTravelListIndex)"/>
       </div>
       <!--拓展位置元素-->
       <div class="empty-content"></div>
@@ -71,6 +71,7 @@ export default {
       warning,
       evaluateTravelList: [],
       completedIndex: null,
+      shareDataIndex: null, // 微信分享内容
     };
   },
   props: {
@@ -101,8 +102,6 @@ export default {
         this.showLoadingToast();
         await this.overTravel(params);
         this.clearLoadingToast();
-
-
       } catch (e) {
         this.clearLoadingToast();
         this.showToast(e);
@@ -151,6 +150,11 @@ export default {
     // 刷新行程
     refreshScheduleList() {
       this.$emit('refreshTravelList');
+    },
+
+    // 点击微信分享(录入页面数据)
+    shareInWeChat(driverTravelListIndex) {
+      this.$emit('getDriverTravelListIndex', driverTravelListIndex);
     },
 
     // 微信分享行程

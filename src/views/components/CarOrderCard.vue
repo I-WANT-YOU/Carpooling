@@ -29,7 +29,7 @@
               <span class="evaluation-num">{{showDataItem.appraiseDown}}</span>
             </div>
             <!--乘客拼车按钮-->
-            <button class="carPoolingButton" @click="confirmDoing">{{buttonText}}</button>
+            <button v-show="buttonText!==''" class="carPoolingButton" @click="confirmDoing">{{buttonText}}</button>
           </div>
         </div>
       </div>

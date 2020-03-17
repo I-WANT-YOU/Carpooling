@@ -1,4 +1,5 @@
 <template>
+  <div class="passengerCarpoolingContainer">
     <div class="passengerCarpooling">
       <!--头部-->
       <CarpoolingHeader/>
@@ -27,13 +28,14 @@
       <DateSelect :showDatePop="showDatePop" @closeDatePop="showDatePop=false" @getSelectedDate="getSelectedDate"/>
       <!--乘客人数-->
       <PassengerNumberSelect :showPassengerNumberPop="showPassengerNumberPop" @closeDatePop="showPassengerNumberPop=false"  @getSelectedPassengerNumber="getSelectedPassengerNumber"/>
-     <!--绑定手机-->
+      <!--绑定手机-->
       <binding-phone :showBindingPhonePop="showBindingPhonePop" @closeBindingPhonePop="showBindingPhonePop=false"  />
       <!--单价选择列表-->
       <UnitPriceSelect :showUnitPricePop="showUnitPricePop" @closePricePop="showUnitPricePop=false" @getSelectedPrice="getSelectedPrice"/>
       <!--站点选择列表-->
       <AllSitesSelect :showSitesPop="showSitesPop" @closeAllSitesPop="showSitesPop=false" @getSelectedSites="getSelectedSites" :allStations="allStations"/>
     </div>
+  </div>
 </template>
 
 <script>
@@ -153,30 +155,35 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  .passengerCarpooling{
+  .passengerCarpoolingContainer{
     width: 100%;
     height: 100%;
-    background:url("../../assets/bg.png") no-repeat;
-    background-size: 100vw 100vh;
-    .content-text{
-      height: 56px;
-      padding: 0 24px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      >span:nth-child(1){
-        font-size: 16px;
-        color: #333333;
-        letter-spacing: 0;
-        line-height: 16px;
-      }
-      >span:nth-child(2){
-        font-size: 12px;
-        color: #999999;
-        letter-spacing: 0;
-        line-height: 12px;
+    background-image: linear-gradient(1deg, #FFFFFF 20%, #DCEBF4 86%);
+    .passengerCarpooling{
+      width: 100%;
+      height: inherit;
+      background:url("../../assets/bgImage.png") no-repeat fixed center bottom;
+      .content-text{
+        height: 56px;
+        padding: 0 24px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        >span:nth-child(1){
+          font-size: 16px;
+          color: #333333;
+          letter-spacing: 0;
+          line-height: 16px;
+        }
+        >span:nth-child(2){
+          font-size: 12px;
+          color: #999999;
+          letter-spacing: 0;
+          line-height: 12px;
+        }
       }
     }
   }
+
 
 </style>

@@ -1,16 +1,25 @@
 <template>
-  <div class="driverReleaseSchedule">
-    <!--头部-->
-    <CarpoolingHeader title="我是司机" class="header"/>
-    <div class="tabs">
+  <div class="scheduleContainer">
+    <div v-show="true" class="driverReleaseSchedule">
+      <!--头部-->
+      <CarpoolingHeader title="我是司机" class="header"/>
+      <div class="tabs">
         <MyLine class="line"/>
         <div class="dateTabs">
           <span class="tab" :class="activeDate==='today'?'activeTab':''" @click="changeDate('today')">今天</span>
           <span class="tab" :class="activeDate==='tomorrow'?'activeTab':''"  @click="changeDate('tomorrow')">明天</span>
         </div>
       </div>
-    <EmptySchedule v-if="travelList.length===0" class="content-schedule"/>
-    <DriverSchedule v-else class="content-schedule" :driverTravelList="driverTravelList" @refreshTravelList="refreshTravelList" @refreshSchedule="refreshSchedule"/>
+      <EmptySchedule v-if="travelList.length===0" class="content-schedule"/>
+      <DriverSchedule
+        v-else
+        class="content-schedule"
+        :driverTravelList="driverTravelList"
+        @refreshTravelList="refreshTravelList"
+        @refreshSchedule="refreshSchedule"
+        @getDriverTravelListIndex="getDriverTravelListIndex"/>
+    </div>
+   <!-- <ShareSchedule v-if="false" :shareData="shareData"/>-->
   </div>
 
 </template>
@@ -21,6 +30,7 @@ import CarpoolingHeader from '@component/CarpoolingHeader.vue';
 import MyLine from '../components/MyLine.vue';
 import EmptySchedule from './components/EmptySchedule.vue';
 import DriverSchedule from './components/DriverSchedule.vue';
+import ShareSchedule from './components/ShareSchedule.vue';
 
 export default {
   name: 'DriverReleaseSchedule',
@@ -28,6 +38,7 @@ export default {
     return {
       activeDate: 'today',
       scheduleIsEmpty: false,
+      shareData: {}, // 分享的内容
     };
   },
   components: {
@@ -35,6 +46,7 @@ export default {
     MyLine,
     EmptySchedule,
     DriverSchedule,
+    ShareSchedule,
   },
   computed: {
     ...mapGetters('driver', ['refreshDriverTravelList', 'driverTravelList']),
@@ -105,6 +117,11 @@ export default {
         this.getDriverTravelList('2');
       }
     },
+
+    // 获取分享内容的index
+    getDriverTravelListIndex(value) {
+      this.shareData = this.driverTravelList[value];
+    },
   },
 
   async mounted() {
@@ -114,42 +131,48 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  .driverReleaseSchedule{
+  .scheduleContainer{
     width: 100%;
     height: 100%;
-    display: flex;
-    flex-direction: column;
-    .header{
-      background: #FFFFFF;
-    }
-    .tabs{
-      background: #FFFFFF;
-      .line{
-        margin: 0 auto;
+    /*行程*/
+    .driverReleaseSchedule{
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      .header{
+        background: #FFFFFF;
       }
-      .dateTabs {
-        display: flex;
-        justify-content: center;
-        .tab {
-          display: block;
-          width: 80px;
-          height: 38px;
-          margin: 0 15px;
-          text-align: center;
-          font-size: 14px;
-          color: #999999;
-          letter-spacing: 0;
-          line-height: 40px;
-          border-bottom: 2px solid #FFFFFF;
+      .tabs{
+        background: #FFFFFF;
+        .line{
+          margin: 0 auto;
         }
-        .activeTab {
-          border-bottom: 2px solid #309CF1;
-          color: #333333;
+        .dateTabs {
+          display: flex;
+          justify-content: center;
+          .tab {
+            display: block;
+            width: 80px;
+            height: 38px;
+            margin: 0 15px;
+            text-align: center;
+            font-size: 14px;
+            color: #999999;
+            letter-spacing: 0;
+            line-height: 40px;
+            border-bottom: 2px solid #FFFFFF;
+          }
+          .activeTab {
+            border-bottom: 2px solid #309CF1;
+            color: #333333;
+          }
         }
       }
+      .content-schedule{
+        flex-grow: 1;
+      }
     }
-    .content-schedule{
-      flex-grow: 1;
-    }
+    /*分享*/
   }
 </style>

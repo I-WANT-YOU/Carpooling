@@ -66,22 +66,25 @@ export default {
         this.$set(this.evaluateList, currentData.index, '1');
       } else if (currentData.signal === 'bad') {
         this.$set(this.evaluateList, currentData.index, '-1');
-      } else {
-        this.$set(this.evaluateList, currentData.index, '0');
       }
     },
 
     // 提交司机评价
     async confirmDriverEvaluate() {
       let values = '';
-      for (let index = 0; index < this.evaluateList.length; index += 1) {
+      for (let index = 0; index < this.evaluateTravelList.length; index += 1) {
         if (this.evaluateList[index] !== null) {
           if (index === this.evaluateList.length - 1) {
-            values = this.evaluateList[index];
+            values += this.evaluateList[index];
           } else {
-            values = `${this.evaluateList[index]},`;
+            values += `${this.evaluateList[index]},`;
           }
+        } else if (index === this.evaluateList.length - 1) {
+          values += 0;
+        } else {
+          values += '0,';
         }
+        console.log(values);
       }
       const currentParams = { travelId: this.evaluateTravelList[0].travelId, value: values, type: '1' };
       await callApi(this.appraiseUser, '评价成功', currentParams);
