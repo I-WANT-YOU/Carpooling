@@ -25,7 +25,7 @@
       <van-button type="primary" class="passengerCancelButton" @click.native="cancel">取消</van-button>
       <van-button type="primary" class="passengerConfirmButton" @click="confirm">完成</van-button>
     </div>
-    <div class="button-group" v-show="userType==='driver'">
+    <div class="button-group" v-show="userType==='driver'||userType==='user'">
       <van-button type="primary" class="driverConfirmButton" @click="confirm">保存</van-button>
     </div>
   </div>

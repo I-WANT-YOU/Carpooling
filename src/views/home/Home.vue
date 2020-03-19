@@ -4,6 +4,7 @@
       <router-link to="/activeOrder">乘客拼车订单（入口）</router-link><br/><br/>
       <router-link to="/driverReleaseSchedule">司机发布</router-link><br/><br/>
       <router-link to="/driverSchedules">司机已有行程(入口)</router-link><br/><br/>
+      <router-link to="/driverBindingPhone">绑定手机号(入口)</router-link><br/><br/>
     </div>
 </template>
 

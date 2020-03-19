@@ -2,7 +2,7 @@
     <div class="driverBindingPhone">
       <!--头部-->
       <CarpoolingHeader title="绑定手机号" class="header"/>
-      <BindingPhoneContent user-type="driver" class="phoneContentClass"/>
+      <BindingPhoneContent user-type="user" class="phoneContentClass"/>
     </div>
 </template>
 
