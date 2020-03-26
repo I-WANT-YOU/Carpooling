@@ -1,8 +1,25 @@
-import { isNaN } from 'lodash';
 import request from '@utils/request';
 import { handlerResponse } from '@utils/auth';
 
 class NewsService {
+  // 获取用户openId
+  static async getOpenId(options) {
+    try {
+      const requestOptions = {
+        url: '/wx/getOpenId',
+        method: 'get',
+        params: {
+          code: options.code,
+          state: options.state,
+        },
+      };
+      const response = await request(requestOptions);
+      return handlerResponse(response);
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
   // 获取用户信息（乘客司机通用）
   static async getUserInfo() {
     try {
@@ -167,8 +184,8 @@ class NewsService {
     try {
       const params = {
         travelid: options.travelId, // 行程id
-        value:  options.value, // 评价内容:1,0,-1分别表示好评,不做评价,差评;司机评价乘客，按照预定顺序，以,分隔。
-        type:  options.type, // 1司机评价乘客 2 乘客评价司机
+        value: options.value, // 评价内容:1,0,-1分别表示好评,不做评价,差评;司机评价乘客，按照预定顺序，以,分隔。
+        type: options.type, // 1司机评价乘客 2 乘客评价司机
       };
       const requestOptions = {
         url: '/lc/user/appraiseAndOver',

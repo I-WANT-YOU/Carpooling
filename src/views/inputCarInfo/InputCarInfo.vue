@@ -3,7 +3,8 @@
       <CarpoolingHeader title="录入车辆信息" class="header"/>
       <!--提示信息-->
       <div class="warning-text">
-        * 司机必须录入车辆信息才能发布行程，乘客不必
+        <!--* 司机必须录入车辆信息才能发布行程，乘客不必-->
+        {{testData}}
       </div>
       <div class="contentContainer">
         <div class="upLoadImage">
@@ -52,6 +53,7 @@
 </template>
 
 <script>
+import { getWeiXinCode } from '@utils/tools';
 import { mapActions } from 'vuex';
 import { Uploader, Field } from 'vant';
 import CarpoolingButton from '@component/CarpoolingButton.vue';
@@ -64,6 +66,7 @@ export default {
   name: 'InputCarInfo',
   data() {
     return {
+      testData: '',
       selectedCaColorRadio: '', // 车辆颜色
       selectedPassengerNumberRadio: '', // 乘车人数
       carNumber: '', // 车牌号
@@ -247,6 +250,9 @@ export default {
         this.selectedPassengerNumberRadio = this.passengerNumberList[currentValue.index].text;
       }
     },
+  },
+  mounted() {
+    this.testData = getWeiXinCode();
   },
 };
 </script>

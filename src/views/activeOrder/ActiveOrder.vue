@@ -57,8 +57,8 @@
 </template>
 
 <script>
+import { getWeiXinCode, callApi } from '@utils/tools';
 import formatDate from 'dayjs';
-import { callApi } from '@utils/tools';
 import { mapActions, mapState, mapGetters } from 'vuex';
 import { Image } from 'vant';
 import CarpoolingHeader from '@component/CarpoolingHeader.vue';
@@ -209,7 +209,8 @@ export default {
     this.showLoadingToast();
   },
   async mounted() {
-    await this.passengerGetTravel('1');
+    getWeiXinCode();
+    /*  await this.passengerGetTravel('1'); */
   },
   beforeDestroy() {
     this.clearLoadingToast();

@@ -1,10 +1,12 @@
 /* eslint-disable no-unused-vars */
+import { Toast } from 'vant';
 import passengerService from '@api/passenger';
 import {
   nth, head, last, get,
 } from 'lodash';
 import formatDate from 'dayjs';
-import { handlerSuccessResponse } from '@/utils/auth';
+import { setOpenId, handlerSuccessResponse } from '../../../utils/auth';
+
 import * as types from '../../mutationTypes';
 
 const state = {
@@ -65,6 +67,21 @@ const mutations = {
 };
 
 const actions = {
+
+  // 获取用户据的openId
+  async getOpenId({ commit }, options) {
+    try {
+      const response = await passengerService.getOpenId(options);
+      const data = await handlerSuccessResponse(response);
+      setOpenId(data);
+      Toast(data);
+
+      // commit(types.GET_SUBWAY_STATIONS, data);
+      return true;
+    } catch (errorMessage) {
+      return Promise.reject(errorMessage);
+    }
+  },
   // 获取用户信息（乘客和司机通用）
   async getUserInfo({ commit }) {
     try {

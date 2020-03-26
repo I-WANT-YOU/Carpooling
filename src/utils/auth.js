@@ -1,10 +1,9 @@
-const LANGUAGE_KEY = 'BGAIN_LANGUAGE';
 
-export const getLanguage = () => window.localStorage.getItem(LANGUAGE_KEY) || 'zh-CN';
+const OPENID = 'openId';
+export const getOpenId = () => window.localStorage.getItem(OPENID);
+export const removeOpenId = () => window.localStorage.removeItem(OPENID);
+export const setOpenId = openId => window.localStorage.setItem(openId);
 
-export const removeLanguage = () => window.localStorage.removeItem(LANGUAGE_KEY);
-
-export const setLanguage = language => window.localStorage.setItem(LANGUAGE_KEY, language);
 
 export const handlerResponse = (response) => {
   const data = response && response.data;

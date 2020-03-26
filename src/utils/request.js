@@ -1,16 +1,19 @@
 import axios from 'axios';
 import baseUrl from '../config/baseUrl';
+import { getOpenId } from './auth';
 
 const request = axios.create({
   timeout: 5000,
   baseURL: baseUrl,
-  /* baseURL: 'api', */
 });
 
 request.interceptors.request.use(
   (config) => {
     const requestConfig = config;
-    requestConfig.headers.openid = 'driverOpenId';
+    const openId = getOpenId();
+    if (openId) {
+      requestConfig.headers.openid = 'passengerOpenId';
+    }
     requestConfig.headers.language = 'ZH_CN';
     return requestConfig;
   },
