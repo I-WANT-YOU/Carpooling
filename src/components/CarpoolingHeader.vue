@@ -1,7 +1,7 @@
 <template>
     <div class="carpoolingHeader">
       <div class="header-icon">
-        <svg-icon icon-class="close" class="icon-class" />
+        <svg-icon icon-class="back" class="icon-class" @click.native="backToBefore"/>
       </div>
       <div class="header-name">{{title}}</div>
       <div class="header-extend"></div>
@@ -19,6 +19,12 @@ export default {
     backIcon: {
       type: String,
       default: '',
+    },
+  },
+  methods: {
+    // 返回上一页
+    backToBefore() {
+      this.$router.go(-1);
     },
   },
 };

@@ -1,4 +1,5 @@
 /* eslint-disable no-unused-vars */
+import { Toast } from 'vant';
 import driverService from '@api/driver';
 import formatDate from 'dayjs';
 import { last, get } from 'lodash';
@@ -9,6 +10,8 @@ const state = {
   phoneCode: '', // 手机验证码
   travelList: [], // 司机行程
   refreshTravelList: {}, // 刷新后的行程
+  shareData: {},
+  shareScheduleInfo: {}, // 分享页面详情信息
 };
 
 const getters = {
@@ -23,6 +26,22 @@ const getters = {
     }
     return state.refreshTravelList;
   },
+  // 分享页面详情信息
+  driverShareScheduleInfo: (state) => {
+    const detailInfo = {
+      ...state.shareScheduleInfo.travel,
+      ...state.shareScheduleInfo.user,
+    };
+    if (detailInfo.startTime) {
+      detailInfo.departureTime = detailInfo.startTime + (10 * 60 * 1000);
+      if (new Date().getDate() === new Date(detailInfo.startTime).getDate()) {
+        detailInfo.startTime = `今天${formatDate(detailInfo.startTime).format('HH:mm')}`;
+      } else {
+        detailInfo.startTime = `明天${formatDate(detailInfo.startTime).format('HH:mm')}`;
+      }
+    }
+    return detailInfo;
+  },
 };
 
 const mutations = {
@@ -31,6 +50,12 @@ const mutations = {
   },
   [types.GET_REFRESH_TRAVEL_LIST](state, payload) { // 司机刷新后的行程
     state.refreshTravelList = payload;
+  },
+  [types.GET_SHARE_SCHEDULE](state, payload) { // 司机分享行程
+    state.shareData = payload;
+  },
+  [types.GET_SHARE_SCHEDULE_INFO](state, payload) { // 获取司机分享页面详情
+    state.shareScheduleInfo = payload;
   },
 };
 
@@ -116,6 +141,29 @@ const actions = {
     try {
       const response = await driverService.confirmLink(options);
       await handlerSuccessResponse(response);
+      return true;
+    } catch (errorMessage) {
+      return Promise.reject(errorMessage);
+    }
+  },
+  // 司机分享行程
+  async shareSchedule({ commit }, options) {
+    try {
+      const response = await driverService.shareSchedule(options);
+      const data = await handlerSuccessResponse(response);
+      commit(types.GET_SHARE_SCHEDULE, data);
+      return true;
+    } catch (errorMessage) {
+      return Promise.reject(errorMessage);
+    }
+  },
+
+  // 获取司机分享详情页面信心
+  async getShareScheduleInfo({ commit }, options) {
+    try {
+      const response = await driverService.getShareScheduleInfo(options);
+      const data = await handlerSuccessResponse(response);
+      commit(types.GET_SHARE_SCHEDULE_INFO, data);
       return true;
     } catch (errorMessage) {
       return Promise.reject(errorMessage);

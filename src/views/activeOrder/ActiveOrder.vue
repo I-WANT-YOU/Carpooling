@@ -1,7 +1,5 @@
 <template>
   <div class="activeOrder">
-    <!--头部-->
-    <CarpoolingHeader/>
     <!--今天明天切换tabs-->
     <div class="tabs">
       <MyLine class="line"/>
@@ -57,11 +55,10 @@
 </template>
 
 <script>
-import { getWeiXinCode, callApi } from '@utils/tools';
+import { getWeiXinCode, callApi, resetUrl } from '@utils/tools';
 import formatDate from 'dayjs';
 import { mapActions, mapState, mapGetters } from 'vuex';
 import { Image } from 'vant';
-import CarpoolingHeader from '@component/CarpoolingHeader.vue';
 import CarpoolingButton from '@component/CarpoolingButton.vue';
 import ConfirmPop from '@component/ConfirmPop.vue';
 import MyLine from '../components/MyLine.vue';
@@ -87,7 +84,6 @@ export default {
   },
   components: {
     'van-image': Image,
-    CarpoolingHeader,
     CarOrderCard,
     ConfirmPop,
     EvaluatePop,
@@ -205,12 +201,24 @@ export default {
     },
   },
 
-  created() {
-    this.showLoadingToast();
+  async created() {
+    const openId = window.localStorage.getItem('openId');
+    if (openId === null || openId === '') {
+      window.localStorage.setItem('openId', 'currentOpenId');
+      resetUrl();
+    }
   },
+
   async mounted() {
-    getWeiXinCode();
-    /*  await this.passengerGetTravel('1'); */
+    const openId = window.localStorage.getItem('openId');
+    if (openId === null || openId === '' || openId === 'currentOpenId') {
+      const data = await getWeiXinCode();
+      if (data) {
+        await this.passengerGetTravel('1');
+      }
+    } else {
+      await this.passengerGetTravel('1');
+    }
   },
   beforeDestroy() {
     this.clearLoadingToast();
@@ -251,7 +259,6 @@ export default {
   }
 
   .tabs{
-    margin-bottom: 10px;
     background: #FFFFFF;
     .line{
       margin: 0 auto;

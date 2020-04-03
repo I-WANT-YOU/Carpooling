@@ -82,7 +82,7 @@ export default {
   computed: {
     ...mapState('passenger', ['subwayStations', 'villageStations']),
     allStations() {
-      return this.villageStations.concat(this.villageStations);
+      return this.villageStations.concat(this.subwayStations);
     },
   },
   methods: {

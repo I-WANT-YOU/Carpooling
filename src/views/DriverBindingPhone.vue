@@ -1,21 +1,31 @@
 <template>
     <div class="driverBindingPhone">
       <!--头部-->
-      <CarpoolingHeader title="绑定手机号" class="header"/>
       <BindingPhoneContent user-type="user" class="phoneContentClass"/>
     </div>
 </template>
 
 <script>
-import CarpoolingHeader from '@component/CarpoolingHeader.vue';
+import { getWeiXinCode, resetUrl } from '@utils/tools';
 import BindingPhoneContent from './components/BindingPhoneContent.vue';
 
 export default {
   name: 'DriverBindingPhone',
-
   components: {
-    CarpoolingHeader,
     BindingPhoneContent,
+  },
+  async created() {
+    const openId = window.localStorage.getItem('openId');
+    if (openId === null || openId === '') {
+      window.localStorage.setItem('openId', 'currentOpenId');
+      resetUrl();
+    }
+  },
+  async mounted() {
+    const openId = window.localStorage.getItem('openId');
+    if (openId === null || openId === '' || openId === 'currentOpenId') {
+      await getWeiXinCode();
+    }
   },
 };
 </script>

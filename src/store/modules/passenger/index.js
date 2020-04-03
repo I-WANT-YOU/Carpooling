@@ -73,15 +73,15 @@ const actions = {
     try {
       const response = await passengerService.getOpenId(options);
       const data = await handlerSuccessResponse(response);
-      setOpenId(data);
-      Toast(data);
-
-      // commit(types.GET_SUBWAY_STATIONS, data);
+      if (data !== '') {
+        setOpenId(data);
+      }
       return true;
     } catch (errorMessage) {
       return Promise.reject(errorMessage);
     }
   },
+
   // 获取用户信息（乘客和司机通用）
   async getUserInfo({ commit }) {
     try {

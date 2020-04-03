@@ -33,7 +33,6 @@
 </template>
 
 <script>
-import { getWeiXinCode } from '@utils/tools';
 import CarpoolingHeader from '@component/CarpoolingHeader.vue';
 import { mapActions } from 'vuex';
 import RideDetailCard from '../components/RideDetailCard.vue';
@@ -115,9 +114,7 @@ export default {
     },
   },
   async mounted() {
-    /*   if (await getWeiXinCode()) {
-      this.getAllSites(); // 获取多有站点
-    } */
+    await this.getAllSites(); // 获取多有站点
   },
 };
 </script>

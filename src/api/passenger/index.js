@@ -1,6 +1,7 @@
 import request from '@utils/request';
 import { handlerResponse } from '@utils/auth';
 
+
 class NewsService {
   // 获取用户openId
   static async getOpenId(options) {
