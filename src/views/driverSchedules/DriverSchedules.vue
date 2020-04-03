@@ -1,8 +1,6 @@
 <template>
   <div class="scheduleContainer">
     <div v-show="true" class="driverReleaseSchedule">
-      <!--头部-->
-      <CarpoolingHeader title="我是司机" class="header"/>
       <div class="tabs">
         <MyLine class="line"/>
         <div class="dateTabs">
@@ -19,18 +17,15 @@
         @refreshSchedule="refreshSchedule"
         @getDriverTravelListIndex="getDriverTravelListIndex"/>
     </div>
-   <!-- <ShareSchedule v-if="false" :shareData="shareData"/>-->
   </div>
-
 </template>
 
 <script>
 import { mapActions, mapGetters, mapState } from 'vuex';
-import CarpoolingHeader from '@component/CarpoolingHeader.vue';
+import { getWeiXinCode, resetUrl } from '@utils/tools';
 import MyLine from '../components/MyLine.vue';
 import EmptySchedule from './components/EmptySchedule.vue';
 import DriverSchedule from './components/DriverSchedule.vue';
-import ShareSchedule from './components/ShareSchedule.vue';
 
 export default {
   name: 'DriverReleaseSchedule',
@@ -42,11 +37,9 @@ export default {
     };
   },
   components: {
-    CarpoolingHeader,
     MyLine,
     EmptySchedule,
     DriverSchedule,
-    ShareSchedule,
   },
   computed: {
     ...mapGetters('driver', ['refreshDriverTravelList', 'driverTravelList']),
@@ -79,8 +72,12 @@ export default {
         await this.getTravelList(params);
         this.clearLoadingToast();
       } catch (e) {
-        this.clearLoadingToast();
-        this.showToast(e);
+        if (e === '请先绑定手机号') {
+          this.clearLoadingToast();
+        } else {
+          this.clearLoadingToast();
+          this.showToast(e);
+        }
       }
     },
 
@@ -124,8 +121,24 @@ export default {
     },
   },
 
+  async created() {
+    const openId = window.localStorage.getItem('openId');
+    if (openId === null || openId === '') {
+      window.localStorage.setItem('openId', 'currentOpenId');
+      resetUrl();
+    }
+  },
+
   async mounted() {
-    await this.getDriverTravelList('1');
+    const openId = window.localStorage.getItem('openId');
+    if (openId === null || openId === '' || openId === 'currentOpenId') {
+      const data = await getWeiXinCode();
+      if (data) {
+        await this.getDriverTravelList('1');
+      }
+    } else {
+      await this.getDriverTravelList('1');
+    }
   },
 };
 </script>

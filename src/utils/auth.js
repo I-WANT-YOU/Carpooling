@@ -2,7 +2,7 @@
 const OPENID = 'openId';
 export const getOpenId = () => window.localStorage.getItem(OPENID);
 export const removeOpenId = () => window.localStorage.removeItem(OPENID);
-export const setOpenId = openId => window.localStorage.setItem(openId);
+export const setOpenId = openId => window.localStorage.setItem('openId', openId);
 
 
 export const handlerResponse = (response) => {

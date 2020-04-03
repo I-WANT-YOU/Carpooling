@@ -66,6 +66,12 @@ const routes = [
     name: 'InputCarInfo',
     component: () => import('../views/inputCarInfo/InputCarInfo.vue'),
   },
+  // 司机分享页面详情
+  {
+    path: '/shareSchedule',
+    name: 'ShareSchedule',
+    component: () => import('../views/shareSchedule/ShareSchedule.vue'),
+  },
 
   {
     path: '*',

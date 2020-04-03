@@ -1,10 +1,8 @@
 <template>
     <div class="inputCarInfo">
-      <CarpoolingHeader title="录入车辆信息" class="header"/>
       <!--提示信息-->
       <div class="warning-text">
-        <!--* 司机必须录入车辆信息才能发布行程，乘客不必-->
-        {{testData}}
+        * 司机必须录入车辆信息才能发布行程，乘客不必
       </div>
       <div class="contentContainer">
         <div class="upLoadImage">
@@ -53,11 +51,10 @@
 </template>
 
 <script>
-import { getWeiXinCode } from '@utils/tools';
+import { getWeiXinCode, resetUrl } from '@utils/tools';
 import { mapActions } from 'vuex';
 import { Uploader, Field } from 'vant';
 import CarpoolingButton from '@component/CarpoolingButton.vue';
-import CarpoolingHeader from '@component/CarpoolingHeader.vue';
 import MyLine from '../components/MyLine.vue';
 import CarRadio from './components/CarRadio.vue';
 import PassengerNumberRadio from './components/PassengerNumberRadio.vue';
@@ -66,7 +63,7 @@ export default {
   name: 'InputCarInfo',
   data() {
     return {
-      testData: '',
+      test: '',
       selectedCaColorRadio: '', // 车辆颜色
       selectedPassengerNumberRadio: '', // 乘车人数
       carNumber: '', // 车牌号
@@ -173,7 +170,6 @@ export default {
     'van-field': Field,
     'van-uploader': Uploader,
     CarpoolingButton,
-    CarpoolingHeader,
     MyLine,
     CarRadio,
     PassengerNumberRadio,
@@ -251,8 +247,18 @@ export default {
       }
     },
   },
-  mounted() {
-    this.testData = getWeiXinCode();
+  async created() {
+    const openId = window.localStorage.getItem('openId');
+    if (openId === null || openId === '') {
+      window.localStorage.setItem('openId', 'currentOpenId');
+      resetUrl();
+    }
+  },
+  async mounted() {
+    const openId = window.localStorage.getItem('openId');
+    if (openId === null || openId === '' || openId === 'currentOpenId') {
+      await getWeiXinCode();
+    }
   },
 };
 </script>

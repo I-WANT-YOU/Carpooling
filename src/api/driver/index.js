@@ -165,6 +165,40 @@ class driverService {
       throw new Error(error);
     }
   }
+
+  // 司机分享行程
+  static async shareSchedule(options) {
+    try {
+      const requestOptions = {
+        url: '/wx/signature.do',
+        method: 'get',
+        params: {
+          url: options,
+        },
+      };
+      const response = await request(requestOptions);
+      return handlerResponse(response);
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
+  // 获取司机分享详情页面信心
+  static async getShareScheduleInfo(options) {
+    try {
+      const requestOptions = {
+        url: '/lc/travel/getSharedTravel',
+        method: 'get',
+        params: {
+          travelId: options,
+        },
+      };
+      const response = await request(requestOptions);
+      return handlerResponse(response);
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
 }
 
 export default driverService;

@@ -8,7 +8,7 @@
         给个评价吧
       </div>
       <EvaluatePassengerContent
-        v-for="(driverTravelListItem,driverTravelListIndex) in evaluateTravelList"
+        v-for="(driverTravelListItem,driverTravelListIndex) in evaluateTravelList.links"
         :driverTravelListItem="driverTravelListItem"
         :driverTravelListIndex="driverTravelListIndex"
         @getSignal="getSignal"
@@ -40,8 +40,8 @@ export default {
       default: false,
     },
     evaluateTravelList: {
-      type: Array,
-      default: () => [],
+      type: Object,
+      default: () => {},
     },
   },
   watch: {
@@ -72,7 +72,7 @@ export default {
     // 提交司机评价
     async confirmDriverEvaluate() {
       let values = '';
-      for (let index = 0; index < this.evaluateTravelList.length; index += 1) {
+      for (let index = 0; index < this.evaluateTravelList.links.length; index += 1) {
         if (this.evaluateList[index] !== null) {
           if (index === this.evaluateList.length - 1) {
             values += this.evaluateList[index];
@@ -84,9 +84,11 @@ export default {
         } else {
           values += '0,';
         }
-        console.log(values);
       }
-      const currentParams = { travelId: this.evaluateTravelList[0].travelId, value: values, type: '1' };
+      if (this.evaluateTravelList.links.length === 0) {
+        values = '0';
+      }
+      const currentParams = { travelId: this.evaluateTravelList.travel.id, value: values, type: '1' };
       await callApi(this.appraiseUser, '评价成功', currentParams);
       this.$emit('closeEvaluatePassengerPop');
     },

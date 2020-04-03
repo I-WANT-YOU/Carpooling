@@ -10,10 +10,11 @@ const request = axios.create({
 request.interceptors.request.use(
   (config) => {
     const requestConfig = config;
-    const openId = getOpenId();
-    if (openId) {
-      requestConfig.headers.openid = 'passengerOpenId';
-    }
+    // const openId = getOpenId();
+    // if (openId) {
+    //   requestConfig.headers.openid = 'passengerOpenId';
+    // }
+    requestConfig.headers.openid = 'owyTewkhEHeiBrN7-mZ25qWYmn40';
     requestConfig.headers.language = 'ZH_CN';
     return requestConfig;
   },
