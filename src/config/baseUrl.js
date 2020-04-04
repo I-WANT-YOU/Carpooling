@@ -1,6 +1,6 @@
 // 线上
-const prod = 'http://lc.romacredit.com/jeeplus';
-const dev = 'http://lc.romacredit.com/jeeplus';
+const prod = 'https://api.chuang-w.com';
+const dev = 'https://api.chuang-w.com';
 
 // 测试
 // const prod = 'http://49.233.81.18/jeeplus';
