@@ -85,7 +85,7 @@ export default {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  width: 330px;
+  width: 335px;
   height: 68px;
   line-height: 68px;
   margin: auto;
@@ -102,7 +102,7 @@ export default {
         margin-right: 6px;
       }
       .date-text{
-        font-size: 17px;
+        font-size: 15px;
         color: #333333;
         letter-spacing: 0;
       }
@@ -110,12 +110,12 @@ export default {
     .address-info{
       /* margin-left: 15px;*/
       .arrow-icon{
-        width: 16px;
-        height: 16px;
-        margin: 0 6px;
+        width: 14px;
+        height: 14px;
+        margin: 0 5px;
       }
       .address-text{
-        font-size: 17px;
+        font-size: 15px;
         color: #333333;
         letter-spacing: 0;
       }

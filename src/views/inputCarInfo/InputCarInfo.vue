@@ -4,9 +4,10 @@
       <div class="warning-text">
         * 司机必须录入车辆信息才能发布行程，乘客不必
       </div>
+      <img :src="'https://'+this.img"/>
       <div class="contentContainer">
         <div class="upLoadImage">
-          <van-uploader v-model="fileList"   :max-count="1" />
+          <van-uploader v-model="fileList"   :max-count="1" :after-read="afterRead"/>
           <div class="image-text">请上传带车牌照的车辆照片</div>
         </div>
         <MyLine class="line"/>
@@ -51,8 +52,9 @@
 </template>
 
 <script>
+import COS from 'cos-js-sdk-v5';
 import { getWeiXinCode, resetUrl } from '@utils/tools';
-import { mapActions } from 'vuex';
+import { mapActions, mapState } from 'vuex';
 import { Uploader, Field } from 'vant';
 import CarpoolingButton from '@component/CarpoolingButton.vue';
 import MyLine from '../components/MyLine.vue';
@@ -63,7 +65,7 @@ export default {
   name: 'InputCarInfo',
   data() {
     return {
-      test: '',
+      img: '',
       selectedCaColorRadio: '', // 车辆颜色
       selectedPassengerNumberRadio: '', // 乘车人数
       carNumber: '', // 车牌号
@@ -164,6 +166,7 @@ export default {
           show: false,
         },
       ],
+      cos: null,
     };
   },
   components: {
@@ -174,8 +177,11 @@ export default {
     CarRadio,
     PassengerNumberRadio,
   },
+  computed: {
+    ...mapState('driver', ['uploadInfo']),
+  },
   methods: {
-    ...mapActions('driver', ['saveCarInfo']),
+    ...mapActions('driver', ['saveCarInfo', 'getUploadInfo']),
     /*
     接口方法
      */
@@ -191,6 +197,19 @@ export default {
         this.showToast(e);
       }
     },
+
+    // 获取存储的临时密匙
+    async driverGetUploadInfo() {
+      try {
+        this.showLoadingToast();
+        await this.getUploadInfo();
+        this.clearLoadingToast();
+      } catch (e) {
+        this.clearLoadingToast();
+        this.showToast(e);
+      }
+    },
+
     /*
     非接口方法
      */
@@ -217,7 +236,7 @@ export default {
         selectedCaColorRadio: this.selectedCaColorRadio, // 车辆颜色
         selectedPassengerNumberRadio: this.selectedPassengerNumberRadio, // 乘车人数
         carNumber: this.carNumber, // 车牌号
-        fileList: this.fileList[0].url, // 图片地址
+        fileList: this.img, // 图片地址
       };
       await this.postDriverCarInfo(currentParams);
       return true;
@@ -246,7 +265,58 @@ export default {
         this.selectedPassengerNumberRadio = this.passengerNumberList[currentValue.index].text;
       }
     },
+
+    // 本地获取上传图片
+    afterRead(file) {
+      // 此时可以自行将文件上传至服务器
+      this.driverUploadImage(file);
+    },
+
+    // 初始化实例
+    getCOS() {
+      this.cos = new COS({
+        SecretId: 'AKIDyhG9rOtskLn6HHNePt68xe7sUxA651BC',
+        SecretKey: 'JL8esd9QOehZAm9JBl57tf06PccR4QVY',
+      });
+      console.log(this.uploadInfo);
+      // const that = this;
+
+      // this.cos = new COS({
+      //   // 必选参数
+      //   getAuthorization(options, callback) {
+      //     // 服务端例子：https://github.com/tencentyun/qcloud-cos-sts-sdk/blob/master/scope.md
+      //     callback({
+      //       TmpSecretId: that.uploadInfo.credentials.tmpSecretId,
+      //       TmpSecretKey: that.uploadInfo.credentials.tmpSecretKey,
+      //       XCosSecurityToken: that.uploadInfo.credentials.sessionToken,
+      //       // 建议返回服务器时间作为签名的开始时间，避免用户浏览器本地时间偏差过大导致签名错误
+      //       StartTime: that.uploadInfo.startTime, // 时间戳，单位秒，如：1580000000
+      //       ExpiredTime: that.uploadInfo.expiredTime, // 时间戳，单位秒，如：1580000900
+      //     });
+      //   },
+      // });
+    },
+    // 上传图片
+    driverUploadImage(fileObject) {
+      this.cos.putObject({
+        Bucket: 'chuang-w-1301719218', /* 必须 */
+        Region: 'ap-chengdu', /* 存储桶所在地域，必须字段 */
+        Key: fileObject.file.name, /* 必须 */
+        StorageClass: 'STANDARD',
+        Body: fileObject.file, // 上传文件对象
+        onProgress(progressData) {
+          console.log(111);
+          console.log(JSON.stringify(progressData));
+        },
+      }, (err, data) => {
+        console.log('222');
+        this.img = ` https://${data.Location}`;
+        console.log(data.location);
+        console.log(err || data);
+      });
+    },
   },
+
   async created() {
     const openId = window.localStorage.getItem('openId');
     if (openId === null || openId === '') {
@@ -258,6 +328,11 @@ export default {
     const openId = window.localStorage.getItem('openId');
     if (openId === null || openId === '' || openId === 'currentOpenId') {
       await getWeiXinCode();
+      await this.driverGetUploadInfo();
+      await this.getCOS();
+    } else {
+      await this.driverGetUploadInfo();
+      await this.getCOS();
     }
   },
 };

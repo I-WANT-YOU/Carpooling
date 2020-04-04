@@ -12,6 +12,7 @@ const state = {
   refreshTravelList: {}, // 刷新后的行程
   shareData: {},
   shareScheduleInfo: {}, // 分享页面详情信息
+  uploadInfo: {}, // 获取临时密匙的信息
 };
 
 const getters = {
@@ -56,6 +57,9 @@ const mutations = {
   },
   [types.GET_SHARE_SCHEDULE_INFO](state, payload) { // 获取司机分享页面详情
     state.shareScheduleInfo = payload;
+  },
+  [types.GET_UPLOAD_INFO](state, payload) { // 临时密匙信息
+    state.uploadInfo = payload;
   },
 };
 
@@ -164,6 +168,18 @@ const actions = {
       const response = await driverService.getShareScheduleInfo(options);
       const data = await handlerSuccessResponse(response);
       commit(types.GET_SHARE_SCHEDULE_INFO, data);
+      return true;
+    } catch (errorMessage) {
+      return Promise.reject(errorMessage);
+    }
+  },
+
+  // 司机获取上传图片的临时密匙
+  async getUploadInfo({ commit }, options) {
+    try {
+      const response = await driverService.getUploadInfo(options);
+      const data = await handlerSuccessResponse(response);
+      commit(types.GET_UPLOAD_INFO, data);
       return true;
     } catch (errorMessage) {
       return Promise.reject(errorMessage);

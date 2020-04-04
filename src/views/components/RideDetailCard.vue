@@ -173,9 +173,9 @@ export default {
         await this.$router.push('/driverSchedules');
       } catch (error) {
         this.clearLoadingToast();
-        if (error === '请先绑定手机号') {
+        if (error === '请绑定手机号') {
           this.$emit('showBindingPhone');
-        } else if (error === '请先编辑车辆信息') {
+        } else if (error === '车辆信息确实,请检查') {
           this.$router.push('/inputCarInfo');
         } else {
           this.showToast(error);

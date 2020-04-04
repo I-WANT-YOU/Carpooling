@@ -199,6 +199,20 @@ class driverService {
       throw new Error(error);
     }
   }
+
+  // 获取图片上传的临时密匙
+  static async getUploadInfo() {
+    try {
+      const requestOptions = {
+        url: '/cos/getCredentials.do',
+        method: 'get',
+      };
+      const response = await request(requestOptions);
+      return handlerResponse(response);
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
 }
 
 export default driverService;
