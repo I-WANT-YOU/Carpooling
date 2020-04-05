@@ -3,7 +3,7 @@
       <!--行程信息-->
       <div class="rideInfo">
         <!--车辆照片-->
-        <van-image  :src="showDataItem.carPic" class="carImage"/>
+        <van-image  :src="showDataItem.carPic+'/h5show'" class="carImage"/>
         <!--行程具体信息-->
         <div class="rideInfoDetail">
           <div class="row">

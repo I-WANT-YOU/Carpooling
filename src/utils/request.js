@@ -12,7 +12,7 @@ request.interceptors.request.use(
     const requestConfig = config;
     const openId = getOpenId();
     if (openId) {
-      requestConfig.headers.openid = 'passengerOpenId';
+      requestConfig.headers.openid = openId;
     }
     // requestConfig.headers.openid = 'owyTewkhEHeiBrN7-mZ25qWYmn40';
     requestConfig.headers.language = 'ZH_CN';

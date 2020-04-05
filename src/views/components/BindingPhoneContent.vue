@@ -25,7 +25,7 @@
       <van-button type="primary" class="passengerCancelButton" @click.native="cancel">取消</van-button>
       <van-button type="primary" class="passengerConfirmButton" @click="confirm">完成</van-button>
     </div>
-    <div class="button-group" v-show="userType==='driver'||userType==='user'">
+    <div class="button-group button-group-two" v-show="userType==='driver'||userType==='user'">
       <van-button type="primary" class="driverConfirmButton" @click="confirm">保存</van-button>
     </div>
   </div>
@@ -194,8 +194,9 @@ export default {
 
 <style lang="scss" >
   .phoneContainer{
+      position: relative;
       width: 320px;
-      height: 258px;
+      height: 288px;
       background: #FFFFFF;
       border-radius: 12px;
       overflow: hidden;
@@ -246,7 +247,7 @@ export default {
         .phoneNumber{
           .areaCode{
             height: 24px;
-            margin: 0 10px;
+            margin: 0 10px 0 24px;
             align-items: center;
             font-size: 17px;
             line-height: 24px;
@@ -270,12 +271,15 @@ export default {
           }
         }
         .verificationCode{
-          margin: 0 10px;
+          margin: 0 24px;
         }
       }
       .button-group{
+        position: absolute;
+        width: 280px;
+        bottom: 10px;
         display: flex;
-        justify-content: space-around;
+        justify-content: space-between;
         padding: 20px 20px;
         .passengerCancelButton{
           width: 120px;
@@ -302,10 +306,14 @@ export default {
         .driverConfirmButton{
           width: 327px;
           height: 40px;
+          margin: auto;
           background: #309CF1;
           border-radius: 8px;
         }
       }
+    .button-group-two{
+      width: 315px;
+    }
 
     }
 </style>

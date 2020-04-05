@@ -4,10 +4,9 @@
       <div class="warning-text">
         * 司机必须录入车辆信息才能发布行程，乘客不必
       </div>
-      <img :src="'https://'+this.img"/>
       <div class="contentContainer">
         <div class="upLoadImage">
-          <van-uploader v-model="fileList"   :max-count="1" :after-read="afterRead"/>
+          <van-uploader preview-size="120"  :max-count="1" :after-read="afterRead"  v-model="fileList"/>
           <div class="image-text">请上传带车牌照的车辆照片</div>
         </div>
         <MyLine class="line"/>
@@ -69,7 +68,9 @@ export default {
       selectedCaColorRadio: '', // 车辆颜色
       selectedPassengerNumberRadio: '', // 乘车人数
       carNumber: '', // 车牌号
-      fileList: [{ url: 'https://img.yzcdn.cn/vant/leaf.jpg' }], // 图片地址
+      fileList: [
+        // { url: 'https://img.yzcdn.cn/vant/leaf.jpg' },
+      ],
       radioList: [
         {
           bgColor: '#FFFFFF',
@@ -269,18 +270,18 @@ export default {
     // 本地获取上传图片
     afterRead(file) {
       // 此时可以自行将文件上传至服务器
+      this.getCOS();
       this.driverUploadImage(file);
     },
 
     // 初始化实例
     getCOS() {
       this.cos = new COS({
-        SecretId: 'AKIDyhG9rOtskLn6HHNePt68xe7sUxA651BC',
-        SecretKey: 'JL8esd9QOehZAm9JBl57tf06PccR4QVY',
+        SecretId: 'AKID0nkQcW5UHm0wd3d1h6rLSIr8I9jdOixI',
+        SecretKey: 'ECuKSLccOt8ety4VeZDPoAIAoCJ9iz1l',
       });
-      console.log(this.uploadInfo);
-      // const that = this;
 
+      // const that = this;
       // this.cos = new COS({
       //   // 必选参数
       //   getAuthorization(options, callback) {
@@ -298,21 +299,23 @@ export default {
     },
     // 上传图片
     driverUploadImage(fileObject) {
+      const myDate = new Date().getTime();
+      const name = fileObject.file.name.split('.');
+      const keyName = `car_${this.openId}_${myDate}.${name[name.length - 1]}`;
       this.cos.putObject({
         Bucket: 'chuang-w-1301719218', /* 必须 */
         Region: 'ap-chengdu', /* 存储桶所在地域，必须字段 */
-        Key: fileObject.file.name, /* 必须 */
+        Key: keyName, /* 必须 */
         StorageClass: 'STANDARD',
         Body: fileObject.file, // 上传文件对象
         onProgress(progressData) {
-          console.log(111);
           console.log(JSON.stringify(progressData));
         },
       }, (err, data) => {
-        console.log('222');
-        this.img = ` https://${data.Location}`;
-        console.log(data.location);
         console.log(err || data);
+        if (data) {
+          this.img = ` https://${data.Location}`;
+        }
       });
     },
   },
@@ -322,17 +325,15 @@ export default {
     if (openId === null || openId === '') {
       window.localStorage.setItem('openId', 'currentOpenId');
       resetUrl();
+    } else {
+      this.openId = openId;
     }
   },
   async mounted() {
     const openId = window.localStorage.getItem('openId');
     if (openId === null || openId === '' || openId === 'currentOpenId') {
       await getWeiXinCode();
-      await this.driverGetUploadInfo();
-      await this.getCOS();
-    } else {
-      await this.driverGetUploadInfo();
-      await this.getCOS();
+      this.openId = openId;
     }
   },
 };

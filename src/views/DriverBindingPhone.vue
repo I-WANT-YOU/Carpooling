@@ -37,7 +37,7 @@ export default {
     background: #EDEDED;
     .phoneContentClass{
       width: 355px;
-      height: 258px;
+      height: 358px;
       margin: 20px auto 0;
       background: #FFFFFF;
       border-radius: 12px;
