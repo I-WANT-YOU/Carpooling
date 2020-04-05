@@ -12,7 +12,10 @@
         </div>
         <!--文字描述-->
         <div class="text-describe">
-          <span class="text-one">您要从哪儿上车</span>
+          <div>
+            <span class="text-one" v-show="stationType==='fromAddress'">{{userType==='driver'?'您要从哪发车':'您要从哪儿上车'}}</span>
+            <span class="text-one"  v-show="stationType==='toAddress'">您要去哪</span>
+          </div>
           <div class="text-two">
             <span>目前只能选择从</span>
             <span class="text-three">  小区站点</span>
@@ -30,8 +33,8 @@
         </div>
         <!--地址列表-->
         <div class="address-list-container"  v-if="showAddressPop">
-          <SelectList :areaList="areaListOne" @getSelectedValue="getSelectedValueVillage" class="width-style"/>
-          <SelectList :areaList="areaListTwo"  @getSelectedValue="getSelectedValueSubway" class="width-style"/>
+          <SelectList ref="village" :areaList="areaListOne" @getSelectedValue="getSelectedValueVillage" class="width-style"/>
+          <SelectList ref='subway'  :areaList="areaListTwo"  @getSelectedValue="getSelectedValueSubway" class="width-style"/>
         </div>
         <!--行程确认按钮-->
         <CarpoolingButton class="confirmButton" :buttonText="buttonText"  @click.native="confirmAddress"/>
@@ -67,6 +70,16 @@ export default {
       type: Boolean,
       default: false,
     },
+    // 乘客 司机
+    userType: {
+      type: String,
+      default: '',
+    },
+    // 出发地 目的地
+    stationType: {
+      type: String,
+      default: '',
+    },
   },
   components: {
     'van-divider': Divider,
@@ -89,10 +102,10 @@ export default {
     showPop() {
       this.site = true;
       this.areaListTwo = {};
-      this.buttonText = '请选择出发地点';
+      this.buttonText = `确认从${this.formatVillageStations[0]}出发`;
       this.confirmAddressValue = '';
-      this.villageSite = '请选择出发地点';
-      this.subwaySite = '请选择出发地点';
+      this.villageSite = `确认从${this.formatVillageStations[0]}出发`;
+      this.subwaySite = `确认从${this.formatSubwayStations[0]}出发`;
       this.$set(this.areaListOne, 'province_list', this.formatVillageStations);
     },
   },
@@ -159,12 +172,8 @@ export default {
     },
     // 确认行程
     confirmAddress() {
-      if (this.buttonText === '请选择出发地点') {
-        this.showToast('请选择出发地点');
-      } else {
-        this.$emit('getConfirmAddress', this.confirmAddressValue);
-        this.$emit('closeAddressPop', false);
-      }
+      this.$emit('getConfirmAddress', this.buttonText.substring(3, this.buttonText.length - 2));
+      this.$emit('closeAddressPop', false);
     },
   },
 };

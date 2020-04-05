@@ -17,12 +17,13 @@
         :confirmPassengerNumber="confirmPassengerNumber"/>
       <!--地址选择列表-->
       <AddressSelect
+        userType="passenger" :stationType="stationType"
         :showAddressPop="showAddressPop"
         :addressSelectValue="addressSelectValue"
         @closeAddressPop="showAddressPop=false"
         @getConfirmAddress="getConfirmAddress"/>
       <!--时间选择列表-->
-      <DateSelect :showDatePop="showDatePop" @closeDatePop="showDatePop=false" @getSelectedDate="getSelectedDate"/>
+      <DateSelect userType="passenger" :showDatePop="showDatePop" @closeDatePop="showDatePop=false" @getSelectedDate="getSelectedDate"/>
       <!--乘客人数-->
       <PassengerNumberSelect :showPassengerNumberPop="showPassengerNumberPop" @closeDatePop="showPassengerNumberPop=false"  @getSelectedPassengerNumber="getSelectedPassengerNumber"/>
       <!--绑定手机-->
@@ -55,6 +56,7 @@ export default {
       addressType: '', // 区分是出发还是目的地
       confirmDate: '', // 出发时间
       confirmPassengerNumber: '', // 乘车人数
+      stationType: '', // 区分目的地还是出发地
     };
   },
   components: {
@@ -66,7 +68,7 @@ export default {
     BindingPhone,
   },
   methods: {
-    ...mapActions('passenger', ['getSubwayStations', 'getVillageStations']),
+    ...mapActions('passenger', ['getSubwayStations', 'getVillageStations', 'getUserInfo']),
     /*
      接口方法
     */
@@ -74,6 +76,7 @@ export default {
     async getAllSites() {
       try {
         this.showLoadingToastWithoutOverlay();
+        await this.getUserInfo();
         await this.getVillageStations('1');
         await this.getSubwayStations('2');
         this.clearLoadingToast();
@@ -87,6 +90,7 @@ export default {
       this.showAddressPop = true;
       this.addressType = value;
       this.addressSelectValue = true;
+      this.stationType = value;
     },
     // 展示时间pop
     showDate() {

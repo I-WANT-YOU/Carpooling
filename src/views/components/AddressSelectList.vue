@@ -2,12 +2,12 @@
     <div class="selectList">
       <van-area
         :area-list="areaList"
+        value="0"
         :item-height="40"
         :visible-item-count="3"
         :columns-num="1"
         confirm-button-text=" "
         cancel-button-text=" "
-        :columns-placeholder="['请选择']"
         @change="changeSelectedValue"
       />
     </div>

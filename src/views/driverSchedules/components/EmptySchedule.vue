@@ -39,7 +39,6 @@ export default {
       background: url("../../../assets/bgImage.png") no-repeat fixed center center;
       .text{
         margin: 50px 0 0 88px ;
-
         color: #2C5EB8;
         letter-spacing: 0;
         line-height: 24px;

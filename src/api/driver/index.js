@@ -2,6 +2,20 @@ import request from '@utils/request';
 import { handlerResponse } from '@utils/auth';
 
 class driverService {
+  // 获取单价
+  static async getPrices() {
+    try {
+      const requestOptions = {
+        url: '/lc/travel/getPrices',
+        method: 'get',
+      };
+      const response = await request(requestOptions);
+      return handlerResponse(response);
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
   // 司机查询行程
   static async getTravelList(options) {
     try {
@@ -11,6 +25,20 @@ class driverService {
         params: {
           type: options,
         },
+      };
+      const response = await request(requestOptions);
+      return handlerResponse(response);
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
+
+  // 司机查询最后一条行程
+  static async getLastTravel() {
+    try {
+      const requestOptions = {
+        url: '/lc/travel/getLastTravel',
+        method: 'get',
       };
       const response = await request(requestOptions);
       return handlerResponse(response);

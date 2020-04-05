@@ -10,6 +10,7 @@ import { setOpenId, handlerSuccessResponse } from '../../../utils/auth';
 import * as types from '../../mutationTypes';
 
 const state = {
+  userInfo: {}, // 用户信息
   phoneCode: '', // 手机验证码
   subwayStations: [], // 站点
   villageStations: [], // 站点
@@ -49,6 +50,9 @@ const getters = {
 };
 
 const mutations = {
+  [types.GET_USER_INFO](state, payload) { // 用户信息
+    state.userInfo = payload;
+  },
   [types.GET_PHONE_CODE](state, payload) {
     state.phoneCode = payload;
   },
@@ -87,7 +91,7 @@ const actions = {
     try {
       const response = await passengerService.getUserInfo();
       const data = await handlerSuccessResponse(response);
-      // commit(types.GET_SUBWAY_STATIONS, data);
+      commit(types.GET_USER_INFO, data);
       return true;
     } catch (errorMessage) {
       return Promise.reject(errorMessage);

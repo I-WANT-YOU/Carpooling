@@ -44,13 +44,17 @@ export default {
       showPop: false,
       buttonText: '确认站点的单价',
       selectedUnitPriceValue: '7',
-      priceList: ['7', '8', '10', '18', '33', '99'],
+      // priceList: ['7', '8', '10', '18', '33', '99'],
     };
   },
   props: {
     showUnitPricePop: {
       type: Boolean,
       default: false,
+    },
+    priceList: {
+      type: Array,
+      default: () => [],
     },
   },
   watch: {

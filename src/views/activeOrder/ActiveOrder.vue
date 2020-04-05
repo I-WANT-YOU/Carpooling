@@ -11,6 +11,10 @@
     <!--行程为空的背景-->
     <div v-if="orderTravelList.length===0" class="emptyScheduleContainer">
       <div class="emptySchedule">
+        <div class="text">
+          <p>您还没有行程</p>
+          <p>来预定行程吧！</p>
+        </div>
         <div class="position-class">
           <CarpoolingButton buttonText="预约拼车"  @click.native="goToCarpooling"/>
         </div>
@@ -112,9 +116,6 @@ export default {
         this.showLoadingToast();
         await this.getTravel(params);
         this.clearLoadingToast();
-        if (this.orderTravelList.length === 0) {
-          this.showToast('您的行程为空');
-        }
       } catch (e) {
         this.clearLoadingToast();
         if (e === '请先绑定手机号') {
@@ -255,6 +256,22 @@ export default {
       flex-grow: 1;
       background: url("../../assets/bgImage.png") no-repeat fixed center center;
       background-size: 375px 354px;
+      .text{
+        margin: 50px 0 0 88px ;
+        color: #2C5EB8;
+        letter-spacing: 0;
+        line-height: 24px;
+        >p{
+          margin: 0;
+        }
+        >p:nth-child(1){
+          font-size: 18px;
+          margin-bottom: 11px;
+        }
+        >p:nth-child(2){
+          font-size: 30px;
+        }
+      }
     }
   }
 

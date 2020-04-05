@@ -7,9 +7,11 @@ import { handlerSuccessResponse } from '@/utils/auth';
 import * as types from '../../mutationTypes';
 
 const state = {
+  prices: [], // 单价
   phoneCode: '', // 手机验证码
   travelList: [], // 司机行程
   refreshTravelList: {}, // 刷新后的行程
+  lastTravelList: {}, // 司机最后一条行程
   shareData: {},
   shareScheduleInfo: {}, // 分享页面详情信息
   uploadInfo: {}, // 获取临时密匙的信息
@@ -46,8 +48,14 @@ const getters = {
 };
 
 const mutations = {
+  [types.GET_PRICE](state, payload) { // 单价
+    state.prices = payload;
+  },
   [types.GET_DRIVER_TRAVEL_LIST](state, payload) { // 司机行程
     state.travelList = payload;
+  },
+  [types.GET_DRIVER_LAST_TRAVEL](state, payload) { // 司机最后一条行程
+    state.lastTravelList = payload;
   },
   [types.GET_REFRESH_TRAVEL_LIST](state, payload) { // 司机刷新后的行程
     state.refreshTravelList = payload;
@@ -64,13 +72,35 @@ const mutations = {
 };
 
 const actions = {
+  // 获取单价
+  async getPrices({ commit }) {
+    try {
+      const response = await driverService.getPrices();
+      const data = await handlerSuccessResponse(response);
+      commit(types.GET_PRICE, data);
+      return true;
+    } catch (errorMessage) {
+      return Promise.reject(errorMessage);
+    }
+  },
   // 司机查询行程
-
   async getTravelList({ commit }, options) {
     try {
       const response = await driverService.getTravelList(options);
       const data = await handlerSuccessResponse(response);
       commit(types.GET_DRIVER_TRAVEL_LIST, data);
+      return true;
+    } catch (errorMessage) {
+      return Promise.reject(errorMessage);
+    }
+  },
+
+  // 司机查询最后一条行程
+  async getLastTravel({ commit }) {
+    try {
+      const response = await driverService.getLastTravel();
+      const data = await handlerSuccessResponse(response);
+      commit(types.GET_DRIVER_LAST_TRAVEL, data);
       return true;
     } catch (errorMessage) {
       return Promise.reject(errorMessage);

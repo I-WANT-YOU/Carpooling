@@ -1,8 +1,8 @@
 <template>
     <div class="carRadio"
-         :style="{background: carRadioItem.bgColor,color:carRadioItem.textColor}" :class="carRadioItem.text==='白'?'white-class':''"
+         :style="{background: carRadioItem.bgColor,color:carRadioItem.textColor}" :class="carRadioItem.text==='白色'?'white-class':''"
          @click="toggleCarRadio">
-      <span class="radio-text">{{carRadioItem.text}}</span>
+      <span class="radio-text">{{carRadioItem.text==='其他'?carRadioItem.text:carRadioItem.text.charAt(0)}}</span>
       <van-image v-show="showCarRadio" :src="carRadioImage" class="carRadio-icon" />
     </div>
 </template>

@@ -5,7 +5,7 @@
       <div class="destinationContainer">
         <div class="from destination">
           <van-image  :src="from" class="front-icon"/>
-          <van-field v-model="fromAddress" class="input-class" placeholder="您要从哪儿上车" readonly @click="showAddress('fromAddress')"/>
+          <van-field v-model="fromAddress" class="input-class" :placeholder="userType==='driver'?'您要从哪发车':'您要从哪儿上车'" readonly @click="showAddress('fromAddress')"/>
         </div>
         <div class="line line-one"></div>
         <div class="to destination">
@@ -134,9 +134,26 @@ export default {
     confirmSites() {
       this.allSites = JSON.parse(this.confirmSites).join(',');
     },
+    // 监听用户信息 初始化信息
+    userInfo(value) {
+      if (value.station) {
+        this.fromAddress = value.station;
+        this.toAddress = '潞城A口';
+      }
+    },
+    // 监听用户信息 初始化信息
+    lastTravelList(value) {
+      if (value.fromStation && value.toStation) {
+        this.fromAddress = value.fromStation;
+        this.toAddress = value.toStation;
+        this.allSites = value.stations;
+        this.unitPrice = value.fee;
+      }
+    },
   },
   computed: {
-    ...mapState('passenger', ['travelList']),
+    ...mapState('passenger', ['travelList', 'userInfo']),
+    ...mapState('driver', ['lastTravelList']),
     ...mapGetters('passenger', ['passengerTravelList']),
   },
   methods: {

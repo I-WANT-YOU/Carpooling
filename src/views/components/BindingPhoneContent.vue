@@ -5,7 +5,7 @@
       <span class="text-one">{{userType==='driver'?showTextOne:showTextTwo}}</span>
       <div class="text-two">
         <span>绑定即表明同意 </span>
-        <a href="#" style="color:#309CF1;">法律声明及隐私政策</a>
+        <a href="./private_contract.html" style="color:#309CF1;">法律声明及隐私政策</a>
       </div>
     </div>
     <div class="phoneInfo">
@@ -16,7 +16,7 @@
       </div>
       <MyLine class="line"/>
       <div class="verificationCode row-info">
-        <van-field v-model="verificationCode" class="input-class" placeholder="请输入验证码"/>
+        <van-field v-model="verificationCode" type="tel" class="input-class" placeholder="请输入验证码"/>
       </div>
       <MyLine class="line"/>
     </div>

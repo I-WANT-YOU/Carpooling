@@ -21,17 +21,18 @@
         :confirmDate="confirmDate"
         :confirmPassengerNumber="confirmPassengerNumber"
         :confirmUnitPrice="confirmUnitPrice"
-        :confirmSites="confirmSites"/>
+        :confirmSites="confirmSites"
+      />
       <!--地址选择列表-->
-      <AddressSelect :showAddressPop="showAddressPop" :addressSelectValue="addressSelectValue" @closeAddressPop="showAddressPop=false" @getConfirmAddress="getConfirmAddress"/>
+      <AddressSelect userType="driver" :stationType="stationType" :showAddressPop="showAddressPop" :addressSelectValue="addressSelectValue" @closeAddressPop="showAddressPop=false" @getConfirmAddress="getConfirmAddress"/>
       <!--时间选择列表-->
-      <DateSelect :showDatePop="showDatePop" @closeDatePop="showDatePop=false" @getSelectedDate="getSelectedDate"/>
+      <DateSelect userType="driver" :showDatePop="showDatePop" @closeDatePop="showDatePop=false" @getSelectedDate="getSelectedDate"/>
       <!--乘客人数-->
       <PassengerNumberSelect :showPassengerNumberPop="showPassengerNumberPop" @closeDatePop="showPassengerNumberPop=false"  @getSelectedPassengerNumber="getSelectedPassengerNumber"/>
       <!--绑定手机-->
       <binding-phone :showBindingPhonePop="showBindingPhonePop" @closeBindingPhonePop="showBindingPhonePop=false"  />
       <!--单价选择列表-->
-      <UnitPriceSelect :showUnitPricePop="showUnitPricePop" @closePricePop="showUnitPricePop=false" @getSelectedPrice="getSelectedPrice"/>
+      <UnitPriceSelect :showUnitPricePop="showUnitPricePop" :priceList="prices" @closePricePop="showUnitPricePop=false" @getSelectedPrice="getSelectedPrice"/>
       <!--站点选择列表-->
       <AllSitesSelect :showSitesPop="showSitesPop" @closeAllSitesPop="showSitesPop=false" @getSelectedSites="getSelectedSites" :allStations="allStations"/>
     </div>
@@ -67,6 +68,7 @@ export default {
       confirmPassengerNumber: '', // 乘车人数
       confirmUnitPrice: '', // 乘车单价
       confirmSites: '',
+      stationType: '', // 区分目的地和出发地
     };
   },
   components: {
@@ -81,21 +83,25 @@ export default {
   },
   computed: {
     ...mapState('passenger', ['subwayStations', 'villageStations']),
+    ...mapState('driver', ['prices', 'lastTravelList']),
     allStations() {
-      return this.villageStations.concat(this.subwayStations);
+      return this.villageStations;
     },
   },
   methods: {
     ...mapActions('passenger', ['getSubwayStations', 'getVillageStations']),
+    ...mapActions('driver', ['getPrices', 'getLastTravel']),
     /*
      接口方法
      */
-    // 获取站点列表
+    // 获取站点列表和单价
     async getAllSites() {
       try {
         this.showLoadingToastWithoutOverlay();
         await this.getVillageStations('1');
         await this.getSubwayStations('2');
+        await this.getPrices();
+        await this.getLastTravel();
         this.clearLoadingToast();
       } catch (e) {
         this.clearLoadingToast();
@@ -107,6 +113,7 @@ export default {
       this.showAddressPop = true;
       this.addressType = value;
       this.addressSelectValue = true;
+      this.stationType = value;
     },
     // 展示时间pop
     showDate() {

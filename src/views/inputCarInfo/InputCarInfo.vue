@@ -64,7 +64,7 @@ export default {
   name: 'InputCarInfo',
   data() {
     return {
-      img: '',
+      img: '', // 图片地址
       selectedCaColorRadio: '', // 车辆颜色
       selectedPassengerNumberRadio: '', // 乘车人数
       carNumber: '', // 车牌号
@@ -74,49 +74,49 @@ export default {
       radioList: [
         {
           bgColor: '#FFFFFF',
-          text: '白',
+          text: '白色',
           show: false,
         },
         {
           bgColor: '#FFF43E',
-          text: '黄',
+          text: '黄色',
           show: false,
         },
         {
           bgColor: '#1C84FF',
-          text: '蓝',
+          text: '蓝色',
           index: 0,
           show: false,
         },
         {
           bgColor: '#00C553',
-          text: '绿',
+          text: '绿色',
           show: false,
         },
         {
           bgColor: '#000000',
-          text: '黑',
+          text: '黑色',
           textColor: '#FFFFFF',
           show: false,
         },
         {
           bgColor: '#F43232',
-          text: '红',
+          text: '红色',
           show: false,
         },
         {
           bgColor: '#FFAE31',
-          text: '橙',
+          text: '橙色',
           show: false,
         },
         {
           bgColor: '#D6D6D6',
-          text: '银',
+          text: '银色',
           show: false,
         },
         {
           bgColor: '#A173F4',
-          text: '紫',
+          text: '紫色',
           show: false,
         },
         {
@@ -180,12 +180,45 @@ export default {
   },
   computed: {
     ...mapState('driver', ['uploadInfo']),
+    ...mapState('passenger', ['userInfo']),
+  },
+  watch: {
+    userInfo(value) {
+      if (value.carColor && value.carNumber) {
+        this.carNumber = value.carNumber || '';
+      }
+      if (value.carPic) {
+        this.img = value.carPic;
+        this.$set(this.fileList, '0', { url: value.carPic });
+      }
+      if (value.carCapacity) {
+        this.selectedPassengerNumberRadio = value.carCapacity;
+        this.formatData('number', value.carCapacity);
+      }
+      if (value.carColor) {
+        this.selectedCaColorRadio = value.carColor;
+        this.formatData('color', value.carColor);
+      }
+    },
   },
   methods: {
     ...mapActions('driver', ['saveCarInfo', 'getUploadInfo']),
+    ...mapActions('passenger', ['getUserInfo']),
     /*
     接口方法
      */
+
+    // 获取用户信息
+    async driverGetUserInfo() {
+      try {
+        this.showLoadingToast();
+        await this.getUserInfo();
+        this.clearLoadingToast();
+      } catch (e) {
+        this.clearLoadingToast();
+        this.showToast(e);
+      }
+    },
     // 保存车辆信息
     async postDriverCarInfo(params) {
       try {
@@ -214,6 +247,23 @@ export default {
     /*
     非接口方法
      */
+    // 初始化数据
+    formatData(type, text) {
+      if (type === 'number') { // 乘车人数
+        for (let i = 0; i < this.passengerNumberList.length; i += 1) {
+          if (text === this.passengerNumberList[i].text) {
+            this.$set(this.passengerNumberList[i], 'show', true);
+          }
+        }
+      } else {
+        for (let i = 0; i < this.radioList.length; i += 1) {
+          if (text === this.radioList[i].text) {
+            this.$set(this.radioList[i], 'show', true);
+          }
+        }
+      }
+    },
+
     // 保存车辆信息
     async saveDriverCarInfo() {
       if (this.fileList === '') {
@@ -334,6 +384,9 @@ export default {
     if (openId === null || openId === '' || openId === 'currentOpenId') {
       await getWeiXinCode();
       this.openId = openId;
+      await this.driverGetUserInfo();
+    } else {
+      await this.driverGetUserInfo();
     }
   },
 };
@@ -379,6 +432,9 @@ export default {
       height: 55px;
       .input-class{
         padding-left: 0;
+        .van-field__label{
+          padding-right:0
+        }
         .van-field__control{
           height: 30px;
           padding-left: 10px;

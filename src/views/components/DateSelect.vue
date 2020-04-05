@@ -13,9 +13,9 @@
         </div>
         <!--文字描述-->
         <div class="text-describe">
-          <span class="text-one">请选择出发时间，拼成出发</span>
+          <span class="text-one">{{userType==='driver'?'请选择出发时间，发布行程':'请选择出发时间，拼车出发'}}</span>
           <div class="text-two">
-            <span>在所选出发时间内持续为你寻找车辆</span>
+            <span>{{userType==='driver'?'在所选出发时间之后持续为你寻找乘客':'在所选出发时间内持续为你寻找车辆'}}</span>
           </div>
         </div>
         <!--选择列表-->
@@ -56,7 +56,12 @@ export default {
       type: Boolean,
       default: false,
     },
+    userType: {
+      type: String,
+      default: '',
+    },
   },
+
   watch: {
     showDatePop() {
       this.showPop = this.showDatePop;
