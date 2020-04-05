@@ -14,8 +14,11 @@ export const handlerResponse = (response) => {
   return Promise.resolve(data);
 };
 
-export const handlerSuccessResponse = (response) => {
+export const handlerSuccessResponse = (response, type) => {
   if (!response || !(response.code === 1)) {
+    if (type) {
+      return Promise.reject(response);
+    }
     return Promise.reject(response.msg);
   }
   return Promise.resolve(response.data);

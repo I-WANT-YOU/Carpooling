@@ -76,13 +76,17 @@ export default {
     async getAllSites() {
       try {
         this.showLoadingToastWithoutOverlay();
-        await this.getUserInfo();
         await this.getVillageStations('1');
         await this.getSubwayStations('2');
+        await this.getUserInfo();
         this.clearLoadingToast();
       } catch (e) {
-        this.clearLoadingToast();
-        this.showToast(e);
+        if (e === '用户不存在') {
+          this.clearLoadingToast();
+        } else {
+          this.clearLoadingToast();
+          this.showToast(e);
+        }
       }
     },
     // 展示地点pop

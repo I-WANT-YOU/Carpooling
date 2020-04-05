@@ -183,6 +183,15 @@ export default {
     ...mapState('passenger', ['userInfo']),
   },
   watch: {
+    carNumber(value) {
+      if (value) {
+        const currentValue = value.split('');
+        for (let i = 0; i < currentValue.length; i += 1) {
+          currentValue[i] = currentValue[i].toUpperCase();
+        }
+        this.carNumber = currentValue.join('');
+      }
+    },
     userInfo(value) {
       if (value.carColor && value.carNumber) {
         this.carNumber = value.carNumber || '';
@@ -215,8 +224,12 @@ export default {
         await this.getUserInfo();
         this.clearLoadingToast();
       } catch (e) {
-        this.clearLoadingToast();
-        this.showToast(e);
+        if (e.code === -1) {
+          this.clearLoadingToast();
+        } else {
+          this.clearLoadingToast();
+          this.showToast(e);
+        }
       }
     },
     // 保存车辆信息

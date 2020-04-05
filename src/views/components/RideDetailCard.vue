@@ -98,8 +98,8 @@ export default {
       default: '',
     },
     confirmUnitPrice: {
-      type: String,
-      default: '',
+      type: Number,
+      default: null,
     },
     confirmSites: {
       type: String,
@@ -136,14 +136,14 @@ export default {
     },
     // 监听用户信息 初始化信息
     userInfo(value) {
-      if (value.station) {
+      if (value && JSON.stringify(value) !== '{}' && value.station) {
         this.fromAddress = value.station;
         this.toAddress = '潞城A口';
       }
     },
     // 监听用户信息 初始化信息
     lastTravelList(value) {
-      if (value.fromStation && value.toStation) {
+      if (value && JSON.stringify(value) !== '{}' && value.fromStation && value.toStation) {
         this.fromAddress = value.fromStation;
         this.toAddress = value.toStation;
         this.allSites = value.stations;
@@ -157,11 +157,26 @@ export default {
     ...mapGetters('passenger', ['passengerTravelList']),
   },
   methods: {
-    ...mapActions('passenger', ['searchTravel']),
+    ...mapActions('passenger', ['searchTravel', 'getUserInfo']),
     ...mapActions('driver', ['publishTravel']),
     /*
       接口方法
     */
+    // 获取用户信息
+    async passengerGetUserInfo() {
+      try {
+        this.showLoadingToast();
+        await this.getUserInfo();
+        this.clearLoadingToast();
+      } catch (e) {
+        if (e && e.code && e.code === -1) {
+          this.clearLoadingToast();
+        } else {
+          this.clearLoadingToast();
+          this.showToast(e);
+        }
+      }
+    },
 
     // 乘客获取行程
     async passengerSearchTravel(currentParams) {
@@ -250,13 +265,27 @@ export default {
         }
       } else {
         if (this.unitPrice === '') {
-          this.showToast('每人单价');
+          this.showToast('请填写单价');
           return false;
         }
         if (this.allSites === '') {
-          this.showToast('途径站点');
+          this.showToast('请填写途径站点');
           return false;
         }
+      }
+      await this.passengerGetUserInfo();
+      if (this.userInfo && JSON.stringify(this.userInfo) !== '{}') { // 有userInfo信息
+        if (this.userInfo.phone === '') {
+          this.$emit('showBindingPhone'); // 显示手机号
+          return false;
+        }
+        if (this.userInfo.carNumber === '' && this.userInfo.carPic === '') {
+          this.$router.push('/inputCarInfo');
+          return false;
+        }
+      } else { // 没有userInfo
+        this.$emit('showBindingPhone'); // 显示手机号
+        return false;
       }
 
       // 时间格式转换

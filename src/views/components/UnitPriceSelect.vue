@@ -43,7 +43,7 @@ export default {
     return {
       showPop: false,
       buttonText: '确认站点的单价',
-      selectedUnitPriceValue: '7',
+      selectedUnitPriceValue: 0,
       // priceList: ['7', '8', '10', '18', '33', '99'],
     };
   },

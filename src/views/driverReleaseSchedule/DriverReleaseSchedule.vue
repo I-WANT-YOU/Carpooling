@@ -66,7 +66,7 @@ export default {
       addressType: '', // 区分是出发还是目的地
       confirmDate: '', // 出发时间
       confirmPassengerNumber: '', // 乘车人数
-      confirmUnitPrice: '', // 乘车单价
+      confirmUnitPrice: null, // 乘车单价
       confirmSites: '',
       stationType: '', // 区分目的地和出发地
     };
@@ -82,14 +82,14 @@ export default {
     AllSitesSelect,
   },
   computed: {
-    ...mapState('passenger', ['subwayStations', 'villageStations']),
+    ...mapState('passenger', ['subwayStations', 'villageStations', 'userInfo']),
     ...mapState('driver', ['prices', 'lastTravelList']),
     allStations() {
       return this.villageStations;
     },
   },
   methods: {
-    ...mapActions('passenger', ['getSubwayStations', 'getVillageStations']),
+    ...mapActions('passenger', ['getSubwayStations', 'getVillageStations', 'getUserInfo']),
     ...mapActions('driver', ['getPrices', 'getLastTravel']),
     /*
      接口方法
@@ -102,10 +102,15 @@ export default {
         await this.getSubwayStations('2');
         await this.getPrices();
         await this.getLastTravel();
+        await this.getUserInfo();
         this.clearLoadingToast();
       } catch (e) {
-        this.clearLoadingToast();
-        this.showToast(e);
+        if (e && e.code && e.code === -1) {
+          this.clearLoadingToast();
+        } else {
+          this.clearLoadingToast();
+          this.showToast(e);
+        }
       }
     },
     // 展示地点pop

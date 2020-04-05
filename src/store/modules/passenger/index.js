@@ -90,7 +90,7 @@ const actions = {
   async getUserInfo({ commit }) {
     try {
       const response = await passengerService.getUserInfo();
-      const data = await handlerSuccessResponse(response);
+      const data = await handlerSuccessResponse(response, 'userInfo');
       commit(types.GET_USER_INFO, data);
       return true;
     } catch (errorMessage) {

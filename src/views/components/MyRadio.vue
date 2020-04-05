@@ -27,8 +27,8 @@ export default {
   },
   props: {
     priceValue: {
-      type: String,
-      default: '',
+      type: Number,
+      default: null,
     },
     otherText: {
       type: String,

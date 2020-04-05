@@ -154,7 +154,7 @@ export default {
         this.villageSite = '请选择出发地点';
         this.buttonText = this.villageSite;
       } else {
-        this.villageSite = `确认${value}出发`;
+        this.villageSite = `确认从${value}出发`;
         this.buttonText = this.villageSite;
         this.confirmAddressValue = value;
       }
@@ -165,7 +165,7 @@ export default {
         this.subwaySite = '请选择出发地点';
         this.buttonText = this.subwaySite;
       } else {
-        this.subwaySite = `确认${value}出发`;
+        this.subwaySite = `确认从${value}出发`;
         this.buttonText = this.subwaySite;
         this.confirmAddressValue = value;
       }
