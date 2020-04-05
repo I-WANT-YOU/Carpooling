@@ -32,16 +32,16 @@ export default {
 
 <style lang="scss" scoped>
   .driverBindingPhone{
-    width: 100%;
-    height: 100%;
+    width: 100vw;
+    height: 100vh;
     background: #EDEDED;
+    overflow: hidden;
     .phoneContentClass{
       width: 355px;
-      height: 358px;
+      height: 268px;
       margin: 20px auto 0;
       background: #FFFFFF;
       border-radius: 12px;
-      overflow: hidden;
     }
   }
 </style>
