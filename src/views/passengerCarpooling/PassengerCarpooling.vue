@@ -81,7 +81,7 @@ export default {
         await this.getUserInfo();
         this.clearLoadingToast();
       } catch (e) {
-        if (e === '用户不存在') {
+        if (e && e.code && e.code === -1) {
           this.clearLoadingToast();
         } else {
           this.clearLoadingToast();

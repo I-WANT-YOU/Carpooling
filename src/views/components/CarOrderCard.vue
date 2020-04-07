@@ -34,7 +34,7 @@
         </div>
       </div>
       <!--途径站点信息-->
-      <div class="siteInfo">
+      <div class="siteInfo" v-show="userType!=='share'">
         <div class="site-title">途径：</div>
         <div class="site-content">{{showDataItem.stations}}</div>
       </div>
@@ -75,6 +75,10 @@ export default {
     passengerShowData: {
       type: Object,
       default: () => {},
+    },
+    userType: { // 类别 分享页面
+      type: String,
+      default: '',
     },
   },
   components: {
@@ -121,7 +125,7 @@ export default {
 <style lang="scss" scoped>
   .carOrderCard{
     margin: auto;
-    height: 151px;
+    /*height: 151px;*/
     padding-top: 10px;
  /* <!--行程信息-->*/
     .rideInfo{
@@ -150,7 +154,7 @@ export default {
             align-items: center;
           }
           .column-big{
-            font-size: 14px;
+            font-size: 13px;
             color: #333333;
             letter-spacing: 0;
           }
@@ -160,7 +164,7 @@ export default {
             letter-spacing: 0;
           }
           .phoneImage{
-            width: 13.2px;
+            width: 12px;
             height: 16px;
           }
           .rightArrow{

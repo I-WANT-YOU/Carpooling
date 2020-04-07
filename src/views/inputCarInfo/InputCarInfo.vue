@@ -377,7 +377,7 @@ export default {
       }, (err, data) => {
         console.log(err || data);
         if (data) {
-          this.img = ` https://${data.Location}`;
+          this.img = `https://${data.Location}`;
         }
       });
     },

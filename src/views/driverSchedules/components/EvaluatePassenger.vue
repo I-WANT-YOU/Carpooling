@@ -90,6 +90,7 @@ export default {
       }
       const currentParams = { travelId: this.evaluateTravelList.travel.id, value: values, type: '1' };
       await callApi(this.appraiseUser, '评价成功', currentParams);
+      this.$emit('refreshScheduleList')
       this.$emit('closeEvaluatePassengerPop');
     },
   },

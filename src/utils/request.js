@@ -3,7 +3,7 @@ import baseUrl from '../config/baseUrl';
 import { getOpenId } from './auth';
 
 const request = axios.create({
-  timeout: 5000,
+  timeout: 50000,
   baseURL: baseUrl,
 });
 

@@ -1,17 +1,18 @@
 <template>
   <div class="shareScheduleContainer">
     <div class="shareSchedule">
-      <CarpoolingHeader title="司机的行程"/>
       <div class="contentContainer">
         <div class="tipInfo">
-          <!--<span>司机已在“拼车”平台发布行程，可以预约哦</span>-->
-          <!--<van-image :src="refreshButton" class="refresh-icon"/>-->
-          <van-image :src="share" class="share"/>
+          <div class="text">点击右上角“...”分享到微信群</div>
+          <van-image :src="touch" class="touch-icon"/>
         </div>
+        <!--原有行程-->
         <div class="infoContainer">
-          <CarOrderCard
-            :showDataItem="driverShareScheduleInfo"
-            buttonText=''/>
+          <!--失效-->
+          <div class="hideFail" :class="{fail:travelFail}" >
+            <van-image :src="fail" class="fail-icon"/>
+          </div>
+          <CarOrderCard userType="share" :showDataItem="driverShareScheduleInfo" buttonText=''/>
           <div class="sites">
             <div class="sites-title">途径站点：</div>
             <div class="sites-info" v-show="stations.length!==0" v-for="(stationItem,stationIndex) in stations" :key="stationIndex">
@@ -19,27 +20,48 @@
                 <van-image :src="siteIcon" class="site-icon"/>
                 <span class="site-text">{{stationItem}}</span>
               </div>
-              <button class="info-button" @click="confirm">拼车</button>
+              <van-button class="info-button" @click="confirm" :disabled="driverShareScheduleInfo.seats===0||driverShareScheduleInfo.travelStatus!=='idle'" >拼车</van-button>
+            </div>
+          </div>
+        </div>
+        <!--推荐行程-->
+        <div class="infoContainer" v-show="JSON.stringify(shareScheduleInfo.recommendTravel)!=='{}'&&shareScheduleInfo.recommendTravel">
+          <div class="recommendText">以下行程你可能会感兴趣</div>
+          <CarOrderCard userType="share" :showDataItem="driverRecommendShareScheduleInfo" buttonText=''/>
+          <div class="sites">
+            <div class="sites-title">途径站点：</div>
+            <div class="sites-info" v-show="recommandStations.length!==0" v-for="(stationItem,stationIndex) in recommandStations" :key="stationIndex">
+              <div class="info-text">
+                <van-image :src="siteIcon" class="site-icon"/>
+                <span class="site-text">{{stationItem}}</span>
+              </div>
+              <button class="info-button" @click="confirm('recommend')">拼车</button>
             </div>
           </div>
         </div>
       </div>
-      <van-image :src="ewm" class="ewm"/>
+      <div class="shareImage">
+        <van-image :src="share" class="share"/>
+      </div>
     </div>
+    <!--绑定手机-->
+    <binding-phone :showBindingPhonePop="showBindingPhonePop" @closeBindingPhonePop="showBindingPhonePop=false"  />
   </div>
 
 </template>
 
 <script>
+import { getWeiXinCode, resetUrl } from '@utils/tools';
 import wx from 'weixin-js-sdk';
 import { mapActions, mapState, mapGetters } from 'vuex';
-import { Image } from 'vant';
-import CarpoolingHeader from '@component/CarpoolingHeader.vue';
-import share from '@assets/share_icon.png';
-import ewm from '@assets/share_ewm.png';
+import { Image, Button } from 'vant';
+import share from '@assets/share.png';
+import fail from '@assets/fail-icon.png';
+import touch from './touch-gif.gif';
 import siteIcon from '../components/images/toSite.png';
 import refreshButton from '../components/images/refreshButton.png';
 import CarOrderCard from '../components/CarOrderCard.vue';
+import BindingPhone from '../components/BindingPhone.vue';
 
 export default {
   name: 'ShareSchedule',
@@ -47,32 +69,59 @@ export default {
     return {
       siteIcon,
       refreshButton,
+      touch,
       share,
-      ewm,
+      fail,
       travelId: '',
+      showBindingPhonePop: false, // 绑定手机号弹窗
+      travelFail: false,
     };
   },
   components: {
-    CarpoolingHeader,
     CarOrderCard,
     'van-image': Image,
+    'van-button': Button,
+    BindingPhone,
   },
   computed: {
-    ...mapState('driver', ['shareData']),
-    ...mapGetters('driver', ['driverShareScheduleInfo']),
+    ...mapState('driver', ['shareData', 'shareScheduleInfo']),
+    ...mapState('passenger', ['userInfo']),
+    ...mapGetters('driver', ['driverShareScheduleInfo', 'driverRecommendShareScheduleInfo']),
     stations() {
       if (this.driverShareScheduleInfo.stations && this.driverShareScheduleInfo.stations !== '') {
         return this.driverShareScheduleInfo.stations.split(',');
       }
       return [];
     },
+    recommandStations() {
+      if (this.driverRecommendShareScheduleInfo.stations && this.driverRecommendShareScheduleInfo.stations !== '') {
+        return this.driverRecommendShareScheduleInfo.stations.split(',');
+      }
+      return [];
+    },
   },
   methods: {
     ...mapActions('driver', ['getShareScheduleInfo', 'shareSchedule']),
-    ...mapActions('passenger', ['orderLink']),
+    ...mapActions('passenger', ['orderLink', 'getUserInfo']),
     /*
     接口方法
     */
+
+    // 获取用户信息
+    async passengerGetUserInfo() {
+      try {
+        this.showLoadingToast();
+        await this.getUserInfo();
+        this.clearLoadingToast();
+      } catch (e) {
+        if (e.code === -1) {
+          this.clearLoadingToast();
+        } else {
+          this.clearLoadingToast();
+          this.showToast(e);
+        }
+      }
+    },
     async driverGetShareScheduleInfo(travelId) {
       try {
         this.showLoadingToast();
@@ -102,15 +151,37 @@ export default {
     非接口方法
     */
     // 乘客预定
-    confirm() {
-      const currentParams = {
-        travelId: this.travelId,
-        fromAddress: this.driverShareScheduleInfo.fromStation,
-        toAddress: this.driverShareScheduleInfo.toStation,
-        departureTime: this.driverShareScheduleInfo.departureTime,
-        passengerNumber: '1',
-      };
+    async confirm(params) {
+      await this.passengerGetUserInfo(); // 获取用户信息
+      if (this.userInfo && JSON.stringify(this.userInfo) !== '{}') { // 有信息
+        if (this.userInfo.phone === '') {
+          this.$emit('showBindingPhone'); // 显示手机号
+          return false;
+        }
+      } else {
+        this.$emit('showBindingPhone'); // 显示手机号
+        return false;
+      }
+      let currentParams = {};
+      if (params === 'recommend') {
+        currentParams = {
+          travelId: this.driverRecommendShareScheduleInfo.id,
+          fromAddress: this.driverShareScheduleInfo.fromStation,
+          toAddress: this.driverShareScheduleInfo.toStation,
+          departureTime: this.driverShareScheduleInfo.departureTime,
+          passengerNumber: '1',
+        };
+      } else {
+        currentParams = {
+          travelId: this.travelId,
+          fromAddress: this.driverShareScheduleInfo.fromStation,
+          toAddress: this.driverShareScheduleInfo.toStation,
+          departureTime: this.driverShareScheduleInfo.departureTime,
+          passengerNumber: '1',
+        };
+      }
       this.passengerOrderLink(currentParams);
+      return true;
     },
 
     async getConfigInfo() {
@@ -139,8 +210,8 @@ export default {
     driverShareSchedule() {
       wx.ready(() => {
         wx.updateAppMessageShareData({
-          title: `${this.driverShareScheduleInfo.startTime}  ${this.driverShareScheduleInfo.fromStation}--${this.driverShareScheduleInfo.toStation}  ${this.driverShareScheduleInfo.fee}元/每人`, // 分享标题
-          desc: `途径：${this.driverShareScheduleInfo.stations}`, // 分享描述
+          title: `${this.driverShareScheduleInfo.startTime}  ${this.driverShareScheduleInfo.fromStation}--${this.driverShareScheduleInfo.toStation}  ${this.driverShareScheduleInfo.fee}/人`, // 分享标题
+          desc: `途径：${this.driverShareScheduleInfo.stations}\n剩余座位： ${this.driverShareScheduleInfo.seats}`, // 分享描述
           link: window.location.href, // 分享链接
           imgUrl: 'https://lc-1301580412.cos.ap-beijing.myqcloud.com/logo_round.png', // 分享图标
           type: 'link', // 分享类型,music、video或link，不填默认为link
@@ -155,12 +226,30 @@ export default {
       });
     },
   },
-  async mounted() {
-    if (this.$route.query.travelId) {
-      this.travelId = this.$route.query.travelId;
-      await this.driverGetShareScheduleInfo(this.$route.query.travelId);
+  async created() {
+    const openId = window.localStorage.getItem('openId');
+    if (openId === null || openId === '') {
+      window.localStorage.setItem('openId', 'currentOpenId');
+      window.localStorage.setItem('currentTravelId', this.$route.query.travelId);
+      resetUrl();
     }
-    this.getConfigInfo();
+  },
+  async mounted() {
+    const openId = window.localStorage.getItem('openId');
+    if (openId === null || openId === '' || openId === 'currentOpenId') {
+      await getWeiXinCode();
+      this.travelId = window.localStorage.getItem('currentTravelId');
+      await this.driverGetShareScheduleInfo(this.$route.query.travelId);
+      this.travelFail = this.driverShareScheduleInfo.seats === 0 || this.driverShareScheduleInfo.travelStatus !== 'idle';
+      this.getConfigInfo(); // 设置分享
+    } else {
+      if (this.$route.query.travelId) {
+        this.travelId = this.$route.query.travelId;
+        await this.driverGetShareScheduleInfo(this.$route.query.travelId);
+        this.travelFail = this.driverShareScheduleInfo.seats === 0 || this.driverShareScheduleInfo.travelStatus !== 'idle';
+      }
+      this.getConfigInfo(); // 设置分享
+    }
   },
 };
 </script>
@@ -174,13 +263,22 @@ export default {
   .shareSchedule{
     width: 100%;
     height: 100%;
-    background: url("../../assets/bgImage.png") no-repeat fixed center bottom;
-    background-size: 375px 354px;
     .contentContainer{
       .tipInfo{
-        /*display: flex;*/
-        /*justify-content: center;*/
-        /*align-items: center;*/
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 60px;
+        padding-left: 30px;
+        .text{
+          color:#309CF1;
+          font-size: 18px;
+        }
+        .touch-icon{
+          width: 40px;
+          height: 40px;
+        }
+
         /*height: 44px;*/
         /*font-size: 16px;*/
         /*color: #333333;*/
@@ -192,14 +290,38 @@ export default {
         }
       }
       .infoContainer{
+        position: relative;
         width: 375px;
         margin: auto;
         background: #FFFFFF;
         border-radius: 10px;
+        /*推荐行程*/
+        .recommendText{
+          height: 40px;
+          margin: 20px 20px 0;
+          font-size: 18px;
+          color:#309CF1;
+        }
+        /*失效图片*/
+        .hideFail{
+          display: none;
+        }
+        .fail{
+          display: block;
+          position: absolute;
+          top: 0;
+          width: 375px;
+          height: 200px;
+          z-index: 100;
+          .fail-icon{
+            display:block;
+            width: 150px;
+            height:150px;
+            margin: 0 auto;
+          }
+        }
         .sites{
           padding: 0 10px 0 14px;
-          max-height: 230px;
-          overflow-y: scroll;
           .sites-title{
             height: 35px;
             font-size: 14px;
@@ -230,6 +352,8 @@ export default {
             .info-button{
               width: 56px;
               height: 30px;
+              padding: 0;
+              line-height: 30px;
               border: none;
               background: #309CF1;
               border-radius: 8px;
@@ -243,11 +367,20 @@ export default {
       }
     }
     /*二维码图片*/
-    .ewm {
-      position: fixed;
-      width: 378px;
-      bottom: 0;
-      margin-left: -2px;
+    .shareImage{
+      width: 355px;
+      margin:20px auto 0;
+      display: flex;
+      flex-direction: column;
+      .text{
+        height: 30px;
+        line-height: 30px;
+        color: red;
+        font-size: 15px;
+      }
+      .share {
+        width: 355px;
+      }
     }
   }
 

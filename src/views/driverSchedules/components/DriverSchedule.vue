@@ -43,7 +43,7 @@
         </div>
       </ConfirmPop>
       <!--评价乘客弹窗-->
-      <EvaluatePassenger :showEvaluateConfirmPop="showEvaluateConfirmPop" :evaluateTravelList="evaluateTravelList" @closeEvaluatePassengerPop="showEvaluateConfirmPop=false"/>
+      <EvaluatePassenger :showEvaluateConfirmPop="showEvaluateConfirmPop" :evaluateTravelList="evaluateTravelList" @refreshScheduleList="refreshScheduleList" @closeEvaluatePassengerPop="showEvaluateConfirmPop=false"/>
     </div>
 </template>
 

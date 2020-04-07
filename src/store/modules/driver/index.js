@@ -13,7 +13,10 @@ const state = {
   refreshTravelList: {}, // 刷新后的行程
   lastTravelList: {}, // 司机最后一条行程
   shareData: {},
-  shareScheduleInfo: {}, // 分享页面详情信息
+  shareScheduleInfo: {
+    travel: {},
+    recommendTravel: {},
+  }, // 分享页面详情信息
   uploadInfo: {}, // 获取临时密匙的信息
 };
 
@@ -33,7 +36,20 @@ const getters = {
   driverShareScheduleInfo: (state) => {
     const detailInfo = {
       ...state.shareScheduleInfo.travel,
-      ...state.shareScheduleInfo.user,
+    };
+    if (detailInfo.startTime) {
+      detailInfo.departureTime = detailInfo.startTime + (10 * 60 * 1000);
+      if (new Date().getDate() === new Date(detailInfo.startTime).getDate()) {
+        detailInfo.startTime = `今天${formatDate(detailInfo.startTime).format('HH:mm')}`;
+      } else {
+        detailInfo.startTime = `明天${formatDate(detailInfo.startTime).format('HH:mm')}`;
+      }
+    }
+    return detailInfo;
+  },
+  driverRecommendShareScheduleInfo: (state) => {
+    const detailInfo = {
+      ...state.shareScheduleInfo.recommendTravel,
     };
     if (detailInfo.startTime) {
       detailInfo.departureTime = detailInfo.startTime + (10 * 60 * 1000);

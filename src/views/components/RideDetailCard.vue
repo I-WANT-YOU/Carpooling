@@ -147,7 +147,7 @@ export default {
         this.fromAddress = value.fromStation;
         this.toAddress = value.toStation;
         this.allSites = value.stations;
-        this.unitPrice = value.fee;
+        this.unitPrice = `${value.fee}元/每人`;
       }
     },
   },
@@ -279,8 +279,8 @@ export default {
           this.$emit('showBindingPhone'); // 显示手机号
           return false;
         }
-        if (this.userInfo.carNumber === '' && this.userInfo.carPic === '') {
-          this.$router.push('/inputCarInfo');
+        if (this.userType === 'driver' && this.userInfo.carNumber === '' && this.userInfo.carPic === '') {
+          this.$router.push('/inputCarInfo'); // 显示输入车辆信息
           return false;
         }
       } else { // 没有userInfo
@@ -306,7 +306,7 @@ export default {
       if (this.userType === 'passenger') {
         currentParams.passengerNumber = this.confirmPassengerNumber;
       } else {
-        currentParams.unitPrice = this.confirmUnitPrice;
+        currentParams.unitPrice = this.unitPrice.substring(0, this.unitPrice.indexOf('元'));
         currentParams.allSites = this.allSites;
       }
       if (this.userType === 'passenger') {
