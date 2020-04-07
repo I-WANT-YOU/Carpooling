@@ -42,7 +42,7 @@ export default {
   data() {
     return {
       showPop: false,
-      buttonText: '确认站点的单价',
+      buttonText: '确定途径站点',
       sitesCheckedValues: [],
       allSitesList: [],
     };

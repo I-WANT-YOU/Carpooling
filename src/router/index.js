@@ -8,36 +8,35 @@ const routes = [
     path: '/',
     name: 'Home',
     component: () => import('../views/home/Home.vue'),
-  },
-  // 乘客入口
-  {
-    path: '/passengerEntry',
-    name: 'PassengerEntry',
-    component: () => import('../views/PassengerEntry.vue'),
+    meta: { title: '小潞拼车-首页' },
   },
   // 乘客预约
   {
     path: '/passengerCarpooling',
     name: 'PassengerCarpooling',
     component: () => import('../views/passengerCarpooling/PassengerCarpooling.vue'),
+    meta: { title: '小潞拼车-预定行程' },
   },
   // 拼车订单列表
   {
     path: '/activeOrderList',
     name: 'ActiveOrderList',
     component: () => import('../views/activeOrderList/ActiveOrderList.vue'),
+    meta: { title: '小潞拼车-我是乘客' },
   },
   // 乘客拼车订单
   {
     path: '/activeOrder',
     name: 'ActiveOrder',
     component: () => import('../views/activeOrder/ActiveOrder.vue'),
+    meta: { title: '小潞拼车-我是乘客' },
   },
   // 司机发布行程
   {
     path: '/driverSchedules',
     name: 'DriverSchedules',
     component: () => import('../views/driverSchedules/DriverSchedules.vue'),
+    meta: { title: '小潞拼车-我是司机' },
   },
   // 司机发布行程详情
   {
@@ -46,6 +45,7 @@ const routes = [
     component: () => import('../views/driverReleaseSchedule/DriverReleaseSchedule.vue'),
     meta: {
       keepAlive: true,
+      title: '小潞拼车-发布行程',
     },
   },
   // 司机绑定手机号码
@@ -53,6 +53,7 @@ const routes = [
     path: '/driverBindingPhone',
     name: 'DriverBindingPhone',
     component: () => import('../views/DriverBindingPhone.vue'),
+    meta: { title: '小潞拼车-绑定手机号' },
   },
   // 司机设置站点
   {
@@ -65,12 +66,14 @@ const routes = [
     path: '/inputCarInfo',
     name: 'InputCarInfo',
     component: () => import('../views/inputCarInfo/InputCarInfo.vue'),
+    meta: { title: '小潞拼车-编辑车辆' },
   },
   // 司机分享页面详情
   {
     path: '/shareSchedule',
     name: 'ShareSchedule',
     component: () => import('../views/shareSchedule/ShareSchedule.vue'),
+    meta: { title: '小潞拼车-预定行程' },
   },
 
   {

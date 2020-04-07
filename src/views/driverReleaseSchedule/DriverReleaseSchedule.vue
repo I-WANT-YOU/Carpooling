@@ -2,7 +2,7 @@
   <div class="passengerCarpoolingContainer">
     <div class="passengerCarpooling">
       <!--头部-->
-      <CarpoolingHeader/>
+      <CarpoolingHeader title="发布行程"/>
       <div class="content-text">
         <span>发布行程即可接单</span>
         <span>时间灵活，多劳多得</span>

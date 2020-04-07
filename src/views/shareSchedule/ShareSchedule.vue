@@ -13,7 +13,7 @@
             <van-image :src="fail" class="fail-icon"/>
           </div>
           <CarOrderCard userType="share" :showDataItem="driverShareScheduleInfo" buttonText=''/>
-          <div class="sites">
+          <div class="sites" v-show="!travelFail">
             <div class="sites-title">途径站点：</div>
             <div class="sites-info" v-show="stations.length!==0" v-for="(stationItem,stationIndex) in stations" :key="stationIndex">
               <div class="info-text">
@@ -30,7 +30,7 @@
           <CarOrderCard userType="share" :showDataItem="driverRecommendShareScheduleInfo" buttonText=''/>
           <div class="sites">
             <div class="sites-title">途径站点：</div>
-            <div class="sites-info" v-show="recommandStations.length!==0" v-for="(stationItem,stationIndex) in recommandStations" :key="stationIndex">
+            <div class="sites-info" v-show="recommendStations.length!==0" v-for="(stationItem,stationIndex) in recommendStations" :key="stationIndex">
               <div class="info-text">
                 <van-image :src="siteIcon" class="site-icon"/>
                 <span class="site-text">{{stationItem}}</span>
@@ -93,7 +93,7 @@ export default {
       }
       return [];
     },
-    recommandStations() {
+    recommendStations() {
       if (this.driverRecommendShareScheduleInfo.stations && this.driverRecommendShareScheduleInfo.stations !== '') {
         return this.driverRecommendShareScheduleInfo.stations.split(',');
       }
@@ -111,7 +111,7 @@ export default {
     async passengerGetUserInfo() {
       try {
         this.showLoadingToast();
-        await this.getUserInfo();
+        await this.getUserInfo('userInfo');
         this.clearLoadingToast();
       } catch (e) {
         if (e.code === -1) {
@@ -122,6 +122,8 @@ export default {
         }
       }
     },
+
+    // 获取分享页面信息
     async driverGetShareScheduleInfo(travelId) {
       try {
         this.showLoadingToast();
@@ -150,16 +152,17 @@ export default {
     /*
     非接口方法
     */
+
     // 乘客预定
     async confirm(params) {
       await this.passengerGetUserInfo(); // 获取用户信息
-      if (this.userInfo && JSON.stringify(this.userInfo) !== '{}') { // 有信息
+      if (this.userInfo && JSON.stringify(this.userInfo) !== '{}') { // 有userInfo信息
         if (this.userInfo.phone === '') {
           this.$emit('showBindingPhone'); // 显示手机号
           return false;
         }
-      } else {
-        this.$emit('showBindingPhone'); // 显示手机号
+      } else { // 没有userInfo
+        this.showBindingPhonePop = true; // 显示手机号
         return false;
       }
       let currentParams = {};
@@ -298,7 +301,7 @@ export default {
         /*推荐行程*/
         .recommendText{
           height: 40px;
-          margin: 20px 20px 0;
+          padding: 20px 20px 0;
           font-size: 18px;
           color:#309CF1;
         }
@@ -311,12 +314,12 @@ export default {
           position: absolute;
           top: 0;
           width: 375px;
-          height: 200px;
+          height: 120px;
           z-index: 100;
           .fail-icon{
             display:block;
-            width: 150px;
-            height:150px;
+            width: 120px;
+            height:120px;
             margin: 0 auto;
           }
         }

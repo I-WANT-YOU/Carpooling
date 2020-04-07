@@ -3,7 +3,7 @@ import baseUrl from '../config/baseUrl';
 import { getOpenId } from './auth';
 
 const request = axios.create({
-  timeout: 50000,
+  timeout: 20000,
   baseURL: baseUrl,
 });
 
@@ -23,7 +23,13 @@ request.interceptors.request.use(
 
 request.interceptors.response.use(
   response => response,
-  error => Promise.reject(error),
+  (error) => {
+    let errorMessage = '';
+    if (error) {
+      errorMessage = '网络错误';
+    }
+    Promise.reject(errorMessage);
+  },
 );
 
 export default request;

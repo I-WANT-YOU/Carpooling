@@ -2,7 +2,7 @@
   <div class="passengerCarpoolingContainer">
     <div class="passengerCarpooling">
       <!--头部-->
-      <CarpoolingHeader/>
+      <CarpoolingHeader title="预约拼车"/>
       <!--乘车信息-->
       <div class="title-info">预约即可拼车</div>
       <RideDetailCard

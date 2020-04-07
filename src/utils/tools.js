@@ -1,6 +1,5 @@
 import { Toast } from 'vant';
 import store from '@/store';
-import { getOpenId, setOpenId } from './auth';
 
 // 调用接口的通用化格式化
 export const callApi = async (fun, message, params = null) => {

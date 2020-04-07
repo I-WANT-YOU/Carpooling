@@ -1,7 +1,7 @@
 <template>
     <div class="activeOrderList">
       <!--头部-->
-      <CarpoolingHeader/>
+      <CarpoolingHeader title="我是乘客"/>
       <div class="filterInfo">
         <div class="info">
           <span>{{passengerShowData.showDate?passengerShowData.showDate.replace('出发','  ')+' ':''}}</span>
