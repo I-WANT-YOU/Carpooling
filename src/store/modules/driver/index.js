@@ -40,9 +40,9 @@ const getters = {
     if (detailInfo.startTime) {
       detailInfo.departureTime = detailInfo.startTime + (10 * 60 * 1000);
       if (new Date().getDate() === new Date(detailInfo.startTime).getDate()) {
-        detailInfo.startTime = `今天${formatDate(detailInfo.startTime).format('HH:mm')}`;
+        detailInfo.startTime = `今天 ${formatDate(detailInfo.startTime).format('HH:mm')}`;
       } else {
-        detailInfo.startTime = `明天${formatDate(detailInfo.startTime).format('HH:mm')}`;
+        detailInfo.startTime = `明天 ${formatDate(detailInfo.startTime).format('HH:mm')}`;
       }
     }
     return detailInfo;
@@ -54,9 +54,9 @@ const getters = {
     if (detailInfo.startTime) {
       detailInfo.departureTime = detailInfo.startTime + (10 * 60 * 1000);
       if (new Date().getDate() === new Date(detailInfo.startTime).getDate()) {
-        detailInfo.startTime = `今天${formatDate(detailInfo.startTime).format('HH:mm')}`;
+        detailInfo.startTime = `今天 ${formatDate(detailInfo.startTime).format('HH:mm')}`;
       } else {
-        detailInfo.startTime = `明天${formatDate(detailInfo.startTime).format('HH:mm')}`;
+        detailInfo.startTime = `明天 ${formatDate(detailInfo.startTime).format('HH:mm')}`;
       }
     }
     return detailInfo;

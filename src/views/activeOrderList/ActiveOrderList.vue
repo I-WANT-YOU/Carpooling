@@ -107,7 +107,7 @@ export default {
 .activeOrderList{
   .filterInfo{
     height: 44px;
-    padding: 0 20px;
+    padding: 0 13px;
     display: flex;
     align-items: center;
     justify-content: space-between;

@@ -56,9 +56,9 @@ export default {
     return {
       showPop: false, // 是否展示
       site: true,
-      villageSite: '请选择出发地点',
-      subwaySite: '请选择出发地点',
-      buttonText: '请选择出发地点',
+      villageSite: '',
+      subwaySite: '',
+      buttonText: '',
       confirmAddressValue: '',
       areaListOne: {},
       areaListTwo: {},
@@ -102,10 +102,16 @@ export default {
     showPop() {
       this.site = true;
       this.areaListTwo = {};
-      this.buttonText = `确认从${this.formatVillageStations[0]}出发`;
+      let textValue = '';
+      if (this.stationType === 'fromAddress') {
+        textValue = `确认从${this.formatVillageStations[0]}出发`;
+      } else {
+        textValue = `确认去${this.formatVillageStations[0]}`;
+      }
+      this.buttonText = textValue;
       this.confirmAddressValue = '';
-      this.villageSite = `确认从${this.formatVillageStations[0]}出发`;
-      this.subwaySite = `确认从${this.formatSubwayStations[0]}出发`;
+      this.villageSite = textValue;
+      this.subwaySite = textValue;
       this.$set(this.areaListOne, 'province_list', this.formatVillageStations);
     },
   },
@@ -137,24 +143,37 @@ export default {
         this.site = true;
         this.$set(this.areaListOne, 'province_list', this.formatVillageStations);
         this.areaListTwo = {};
-        this.buttonText = this.villageSite;
+        if (this.stationType === 'fromAddress') {
+          this.buttonText = `确认从${this.formatVillageStations[0]}出发`;
+        } else {
+          this.buttonText = `确认去${this.formatVillageStations[0]}`;
+        }
       } else {
         this.site = false;
         this.areaListOne = {};
         this.$set(this.areaListTwo, 'province_list', this.formatSubwayStations);
-        this.buttonText = this.subwaySite;
+        if (this.stationType === 'fromAddress') {
+          this.buttonText = `确认从${this.formatSubwayStations[0]}出发`;
+        } else {
+          this.buttonText = `确认去${this.formatSubwayStations[0]}`;
+        }
       }
     },
     close() {
       this.$emit('closeAddressPop', false);
     },
+
     // 获取小区站点信息
     getSelectedValueVillage(value) {
       if (value === '请选择') {
         this.villageSite = '请选择出发地点';
         this.buttonText = this.villageSite;
       } else {
-        this.villageSite = `确认从${value}出发`;
+        if (this.stationType === 'fromAddress') {
+          this.villageSite = `确认从${value}出发`;
+        } else {
+          this.villageSite = `确认去${value}`;
+        }
         this.buttonText = this.villageSite;
         this.confirmAddressValue = value;
       }
@@ -165,14 +184,22 @@ export default {
         this.subwaySite = '请选择出发地点';
         this.buttonText = this.subwaySite;
       } else {
-        this.subwaySite = `确认从${value}出发`;
-        this.buttonText = this.subwaySite;
+        if (this.stationType === 'fromAddress') {
+          this.villageSite = `确认从${value}出发`;
+        } else {
+          this.villageSite = `确认去${value}`;
+        }
+        this.buttonText = this.villageSite;
         this.confirmAddressValue = value;
       }
     },
     // 确认行程
     confirmAddress() {
-      this.$emit('getConfirmAddress', this.buttonText.substring(3, this.buttonText.length - 2));
+      if (this.stationType === 'fromAddress') {
+        this.$emit('getConfirmAddress', this.buttonText.substring(3, this.buttonText.length - 2));
+      } else {
+        this.$emit('getConfirmAddress', this.buttonText.substring(3, this.buttonText.length));
+      }
       this.$emit('closeAddressPop', false);
     },
   },

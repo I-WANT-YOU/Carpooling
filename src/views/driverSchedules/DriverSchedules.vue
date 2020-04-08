@@ -186,6 +186,5 @@ export default {
         flex-grow: 1;
       }
     }
-    /*分享*/
   }
 </style>

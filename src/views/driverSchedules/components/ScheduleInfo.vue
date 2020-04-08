@@ -94,8 +94,10 @@ export default {
     align-items: center;
     flex-grow: 1;
     justify-content: space-between;
+    /*时间*/
     .date-info{
-      /* margin-left: 10px;*/
+      display: flex;
+      align-items: center;
       .date-icon{
         width: 16px;
         height: 16px;
@@ -107,12 +109,14 @@ export default {
         letter-spacing: 0;
       }
     }
+    /*地址*/
     .address-info{
-      /* margin-left: 15px;*/
+      display: flex;
+      align-items: center;
       .arrow-icon{
-        width: 14px;
-        height: 14px;
-        margin: 0 5px;
+        width: 13px;
+        height: 13px;
+        margin: 0 ;
       }
       .address-text{
         font-size: 15px;

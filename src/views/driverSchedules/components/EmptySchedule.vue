@@ -3,12 +3,11 @@
     <div class="emptySchedule">
       <div class="text">
         <p>您还没有行程</p>
-        <p>来发布行程吧！</p>
+        <p>{{userType==='passenger'?'来预定行程吧！':'来发布行程吧！'}}</p>
       </div>
        <div class="button">
          <button class="confirm-button" @click="releaseSchedules">
-           <svg-icon icon-class="plus" class="plus-icon"></svg-icon>
-           <span class="plus-text">发布行程</span>
+           <span class="plus-text"> {{userType==='passenger'?'预约拼车':'发布行程'}}</span>
          </button>
        </div>
     </div>
@@ -19,10 +18,20 @@
 <script>
 export default {
   name: 'EmptySchedule',
+  props: {
+    userType: {
+      type: String,
+      default: '',
+    },
+  },
   methods: {
     // 发布行程
     async releaseSchedules() {
-      await this.$router.push('/driverReleaseSchedule');
+      if (this.userType === 'passenger') {
+        this.$router.push('/passengerCarpooling');
+      } else {
+        await this.$router.push('/driverReleaseSchedule');
+      }
     },
   },
 };
@@ -30,6 +39,8 @@ export default {
 
 <style  lang="scss" scoped>
   .emptyScheduleContainer{
+   display: flex;
+    flex-direction: column;
     width: 100%;
     height: 100%;
     background-image: linear-gradient(1deg, #FFFFFF 20%, #DCEBF4 86%);

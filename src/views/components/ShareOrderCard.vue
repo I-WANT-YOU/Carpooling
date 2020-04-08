@@ -6,11 +6,12 @@
         <van-image  :src="showDataItem.carPic+'/h5show'" class="carImage"/>
         <!--行程具体信息-->
         <div class="rideInfoDetail">
+          <!--时间-->
           <div class="row">
-            <div class="column-big">{{showDataItem.startTime+' 出发'}}</div>
-            <div class="column-small">{{showDataItem.carColor}} {{showDataItem.carNumber}}</div>
+            <div class="column-big">{{showDataItem.startTime+'  出发'}}</div>
             <a :href="'tel:'+showDataItem.phone" class="phoneContainer"><van-image :src="phone" class="phoneImage"/></a>
           </div>
+          <!--地点-->
           <div class="row">
             <div class="row-two">
               <span class="column-big">{{showDataItem.fromStation}}</span>
@@ -18,10 +19,11 @@
               <span class="column-big">{{showDataItem.toStation}}</span>
             </div>
           </div>
-          <div class="row row-low">
-            <span class="column-small">余{{showDataItem.seats}}位/共{{showDataItem.carCapacity}}位</span>
+          <!--车辆信息-->
+          <div  class="row">
+            <div class="column-small">{{showDataItem.carColor}} {{showDataItem.carNumber}}</div>
           </div>
-          <!--价格 评价-->
+          <!--价格 评价 座位数-->
           <div class="price row">
             <span class="price-text">{{showDataItem.fee}}元/人</span>
             <div class="evaluation">
@@ -30,8 +32,7 @@
               <van-image :src="bad" class="evaluation-icon"/>
               <span class="evaluation-num">{{showDataItem.appraiseDown}}</span>
             </div>
-            <!--乘客拼车按钮-->
-            <button v-show="buttonText!==''" class="carPoolingButton" @click="confirmDoing">{{buttonText}}</button>
+            <div class="column-small">余{{showDataItem.seats}}位/共{{showDataItem.carCapacity}}位</div>
           </div>
         </div>
       </div>
@@ -131,7 +132,7 @@ export default {
     padding-top: 10px;
  /* <!--行程信息-->*/
     .rideInfo{
-      padding:0 15px;
+      padding:0 20px;
       display: flex;
       height: 90px;
       .carImage{
@@ -156,7 +157,7 @@ export default {
             align-items: center;
           }
           .column-big{
-            font-size: 14px;
+            font-size: 15px;
             color: #333333;
             letter-spacing: 0;
           }
@@ -167,7 +168,7 @@ export default {
           }
           .phoneContainer{
             height: 25px;
-            width: 14px;
+            width: 30px;
             display: flex;
             justify-content: flex-end;
             align-items: center;
@@ -181,19 +182,21 @@ export default {
             height: 15px;
           }
         }
-        .row-low{
-          height: 20px;
-          line-height: 20px;
-        }
         /*价格评价*/
         .price{
           display: flex;
+          align-items:center;
           justify-content: space-between;
           .price-text{
             font-size: 14px;
             color: #FF7228;
             letter-spacing: 0;
             line-height: 14px;
+          }
+          .column-small{
+            font-size: 11px;
+            color: #999999;
+            letter-spacing: 0;
           }
           .evaluation{
             display: flex;
@@ -229,10 +232,10 @@ export default {
     /*途径站点*/
     .siteInfo{
       display: flex;
-      margin:15px 20px 0;
+      height: 32px;
+      margin:8px 20px 0;
       .site-title{
-        height: 32px;
-        flex-shrink: 0;
+        width: 50px;
         display: inline-block;
         font-size: 11px;
         color: #333333;

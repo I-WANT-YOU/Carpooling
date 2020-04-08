@@ -60,7 +60,7 @@ import fail from '@assets/fail-icon.png';
 import touch from './touch-gif.gif';
 import siteIcon from '../components/images/toSite.png';
 import refreshButton from '../components/images/refreshButton.png';
-import CarOrderCard from '../components/CarOrderCard.vue';
+import CarOrderCard from '../components/ShareOrderCard.vue';
 import BindingPhone from '../components/BindingPhone.vue';
 
 export default {

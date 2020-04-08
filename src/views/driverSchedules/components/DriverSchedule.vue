@@ -4,6 +4,7 @@
            v-for="(driverTravelListItem,driverTravelListIndex) in driverTravelList"
            :key="driverTravelListIndex"
            :driverTravelListItem="driverTravelListItem">
+        <!--拼车信息-->
         <ScheduleInfo
           :orderState="driverTravelListItem.travel.travelStatus==='idle'?'撤销':'完成'"
           :isConfirm="driverTravelListItem.travel.travelStatus!=='idle'"
@@ -13,6 +14,7 @@
           @completeSchedule="completeSchedule"
           @refreshSchedule="refreshSchedule"
         />
+        <!--乘客拼车信息-->
         <div  v-for="(passengerInfoItem,passengerInfoIndex) in driverTravelListItem.links" :key="passengerInfoIndex">
           <MyLineOne class="myLine"/>
           <DriverScheduleOrderCard
@@ -21,6 +23,7 @@
             @refreshScheduleList="refreshScheduleList"
           />
         </div>
+        <MyLineOne v-show="driverTravelListItem.travel.travelStatus==='idle' && driverTravelListItem.travel.seats!==0"/>
         <!--微信分享-->
         <ShareScheduleInfo v-show="driverTravelListItem.travel.travelStatus==='idle' && driverTravelListItem.travel.seats!==0" @click.native="shareInWeChat(driverTravelListItem.travel.id)"/>
       </div>

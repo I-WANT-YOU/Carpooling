@@ -8,18 +8,7 @@
         <span class="tab" :class="activeDate==='tomorrow'?'activeTab':''"  @click="changeDate('tomorrow')">明天</span>
       </div>
     </div>
-    <!--行程为空的背景-->
-    <div v-if="orderTravelList.length===0" class="emptyScheduleContainer">
-      <div class="emptySchedule">
-        <div class="text">
-          <p>您还没有行程</p>
-          <p>来预定行程吧！</p>
-        </div>
-        <div class="position-class">
-          <CarpoolingButton buttonText="预约拼车"  @click.native="goToCarpooling"/>
-        </div>
-      </div>
-    </div>
+    <EmptySchedule v-if="orderTravelList.length===0" class="content-schedule" user-type="passenger"/>
     <!--信息详情-->
     <div  v-else class="info-container">
       <div v-for="(showDataItem,showDataIndex) in passengerOrderTravelList"   :key="showDataIndex" >
@@ -71,6 +60,7 @@ import CarOrderCard from '../components/CarOrderCard.vue';
 import EvaluatePop from '../components/EvaluatePop.vue';
 import refreshButton from './images/refreshButton.png';
 import warning from './images/warning.png';
+import EmptySchedule from '../driverSchedules/components/EmptySchedule.vue';
 
 export default {
   name: 'ActiveOrder',
@@ -94,6 +84,7 @@ export default {
     MyLine,
     TipInfo,
     CarpoolingButton,
+    EmptySchedule,
   },
   computed: {
     ...mapState('passenger', ['orderTravelList']),
@@ -231,7 +222,7 @@ export default {
 .activeOrder{
   display: flex;
   flex-direction: column;
-  min-height: 100%;
+  height: 100%;
   /*空白背景*/
   .position-empty{
     width: 100%;
@@ -245,36 +236,6 @@ export default {
     background:white;
     bottom: 0;
   }
-  .emptyScheduleContainer{
-   display: flex;
-    flex-direction: column;
-    width: 100%;
-    flex-grow: 1;
-    background-image: linear-gradient(1deg, #FFFFFF 20%, #DCEBF4 86%);
-    .emptySchedule{
-      width: 100%;
-      flex-grow: 1;
-      background: url("../../assets/bgImage.png") no-repeat fixed center center;
-      background-size: 375px 354px;
-      .text{
-        margin: 50px 0 0 88px ;
-        color: #2C5EB8;
-        letter-spacing: 0;
-        line-height: 24px;
-        >p{
-          margin: 0;
-        }
-        >p:nth-child(1){
-          font-size: 18px;
-          margin-bottom: 11px;
-        }
-        >p:nth-child(2){
-          font-size: 30px;
-        }
-      }
-    }
-  }
-
   .tabs{
     background: #FFFFFF;
     .line{
@@ -323,6 +284,9 @@ export default {
       width:228px;
       line-height: 24px;
     }
+  }
+  .content-schedule{
+    flex-grow: 1;
   }
 }
 </style>
